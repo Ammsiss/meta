@@ -40,14 +40,16 @@ void ResizeHandle::resize(Window& mainW)
         int y{};
         int x{};
         getTerminalSize(y, x);
-
-        resizeterm(y, x);
-    
+        resizeterm(y, x); 
         mainW.updateWindow(y, x);
-        mvwprintw(mainW.getWin(), 0, 0, mainW.getContent().c_str());
+
+        wmove(mainW.getWin(), 0, 0);
+        for(const auto& line : mainW.getData())
+        {
+            wprintw(mainW.getWin(), line.c_str());
+        }
 
         wrefresh(mainW.getWin());
-
         s_resizeFlag.store(false);
     }
 }

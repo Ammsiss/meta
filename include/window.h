@@ -16,16 +16,19 @@ public:
     ~Window();
     
     void updateWindow(int y, int x);
-    int getPrevLineLength();
+    int getLineLength(int line);
     WINDOW* getWin() const;
-    std::string getContent() const;
-    void appendContent(char code);
-    void popContent();
+
+    std::vector<std::string> getData() const;
+    void appendData(int lineNum, char ch);
+    void popData(int line);
+
+    void newLine();
+    void delLine();
 
 private:
-    WINDOW* win{};
-    std::string windowContent{"\n"};
-
+    WINDOW* m_win{};
+    std::vector<std::string> m_data{""};
 };
 
 #endif

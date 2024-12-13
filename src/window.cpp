@@ -9,51 +9,54 @@ Window::Window()
     int y{};
     int x{};
     getmaxyx(stdscr, y, x);
-    win = newwin(y, x - 4, 0, 4);
+    m_win = newwin(y, x - 4, 0, 4);
 }
 
 Window::~Window()
 {
-    delwin(win);
+    delwin(m_win);
 }
 
 void Window::updateWindow(int y, int x)
 {
     // werase(win); to clear artifacts. (potentially unecessary)
-    delwin(win);
-    win = newwin(y, x - 4, 0, 4);
+    delwin(m_win);
+    m_win = newwin(y, x - 4, 0, 4);
 }
 
-int Window::getPrevLineLength()
+int Window::getLineLength(int line)
 {
-    int length{ 0 };
-    size_t i{ std::size(Window::windowContent) - 1 };
-    while(Window::windowContent[i] != '\n')
-    {
-        ++length;
-        --i;
-    }
-
-    return length;
+    return static_cast<int>(std::size(m_data[static_cast<size_t>(line)]));
 }
 
 WINDOW* Window::getWin() const
 {
-    return win;
+    return m_win;
 }
 
-std::string Window::getContent() const
+std::vector<std::string> Window::getData() const
 {
-    return windowContent; 
+    return m_data;
 }
 
-void Window::appendContent(char code)
+void Window::appendData(int line, char ch)
 {
-    windowContent.push_back(code);
+    m_data[static_cast<size_t>(line)].push_back(ch);
 }
 
-void Window::popContent()
+
+void Window::popData(int line)
 {
-    windowContent.pop_back();
+    m_data[static_cast<size_t>(line)].pop_back();
 }
 
+
+void Window::newLine()
+{
+    m_data.push_back("");
+}
+
+void Window::delLine()
+{
+    m_data.pop_back();
+}

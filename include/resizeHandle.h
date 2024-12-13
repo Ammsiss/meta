@@ -13,8 +13,7 @@ public:
     static void resize(Window& mainW);
 
 private:
-    static inline std::atomic<bool> s_resizeFlag{ false };
- 
+    static inline std::atomic<bool> s_resizeFlag{ false }; 
     static void resizeStdscr();
 };
 

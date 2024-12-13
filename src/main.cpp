@@ -29,32 +29,44 @@ int main()
     {
         ResizeHandle::resize(mainW);
 
-
         int input{};
         input = wgetch(mainW.getWin());
 
         int cy{};
         int cx{};
         getyx(mainW.getWin(), cy, cx);
+
         if (input != ERR)
         {
-            if ((input >= 32 && input <= 126) || input == 10) // all characters
+            // newline
+            if(input == 10)
             {
-                wprintw(mainW.getWin(), "%c", static_cast<char>(input));
-                mainW.appendContent(static_cast<char>(input));
+                mainW.appendData(cy, '\n');
+                mainW.newLine();
+                wprintw(mainW.getWin(), "%c", '\n');
             }
-            else if (input == 8 || input == 127) // delete key and backspace
+
+            // Printable characters
+            if (input >= 32 && input <= 126)
+            {
+                mainW.appendData(cy, static_cast<char>(input));
+                wprintw(mainW.getWin(), "%c", static_cast<char>(input));
+            }
+            
+            // Delete key and backspace
+            if (input == 8 || input == 127)
             {
                 if (cx > 0)
                 {
+                    mainW.popData(cy); 
                     mvwprintw(mainW.getWin(), cy, cx - 1, " "); 
                     wmove(mainW.getWin(), cy, cx - 1);
-                    mainW.popContent(); 
                 }
                 else if (cy > 0)
                 {
-                    mainW.popContent();
-                    wmove(mainW.getWin(), cy - 1, mainW.getPrevLineLength());
+                    mainW.delLine();
+                    mainW.popData(cy - 1);
+                    wmove(mainW.getWin(), cy - 1, mainW.getLineLength(cy - 1));
                 }
             }
         } 
