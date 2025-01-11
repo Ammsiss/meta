@@ -38,13 +38,10 @@ std::vector<std::string> Window::getData() const
 {
     return m_data;
 }
-
-void Window::appendData(int line, char ch)
+void Window::appendData(int line, int ch)
 {
-    m_data[static_cast<size_t>(line)].push_back(ch);
+    m_data[static_cast<size_t>(line)].push_back(static_cast<char>(ch));
 }
-
-
 void Window::popData(int line)
 {
     m_data[static_cast<size_t>(line)].pop_back();
@@ -55,7 +52,6 @@ void Window::newLine()
 {
     m_data.push_back("");
 }
-
 void Window::delLine()
 {
     m_data.pop_back();

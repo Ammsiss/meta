@@ -14,7 +14,8 @@ static void initCurses()
     noecho();
     start_color();
     use_default_colors();
-    refresh(); 
+    refresh();
+    set_escdelay(50);
     signal(SIGWINCH, ResizeHandle::setFlag);
 }
 
@@ -23,8 +24,9 @@ int main()
     initCurses();
 
     Window mainW{};
-
-    halfdelay(5);
+    keypad(mainW.getWin(), true);
+    
+    halfdelay(1);
     while (true)
     {
         ResizeHandle::resize(mainW);
@@ -39,9 +41,9 @@ int main()
         if (input != ERR)
         {
             // newline
-            if(input == 10)
+            if (input == 10)
             {
-                mainW.appendData(cy, '\n');
+                mainW.appendData(cy, 10);
                 mainW.newLine();
                 wprintw(mainW.getWin(), "%c", '\n');
             }
@@ -49,8 +51,8 @@ int main()
             // Printable characters
             if (input >= 32 && input <= 126)
             {
-                mainW.appendData(cy, static_cast<char>(input));
-                wprintw(mainW.getWin(), "%c", static_cast<char>(input));
+                mainW.appendData(cy, input);
+                wprintw(mainW.getWin(), "%c", input);
             }
             
             // Delete key and backspace

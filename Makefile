@@ -2,7 +2,7 @@ BINARY = meta
 CODEDIRS = . ./src
 INCDIRS = . ./include
 
-CC = g++
+CC = g++-14
 OPT = -O0
 DEPFLAGS = -MP -MD
 LDFLAGS = -lncurses

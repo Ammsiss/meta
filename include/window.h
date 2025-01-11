@@ -20,7 +20,7 @@ public:
     WINDOW* getWin() const;
 
     std::vector<std::string> getData() const;
-    void appendData(int lineNum, char ch);
+    void appendData(int lineNum, int ch);
     void popData(int line);
 
     void newLine();
