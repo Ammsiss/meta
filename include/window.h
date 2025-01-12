@@ -1,6 +1,8 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <ncurses.h>
+
 #include <string>
 #include <vector>
 
@@ -11,24 +13,26 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
-    Window();
-    Window(int y, int x);
-    ~Window();
+    Window()
+    {
+        int y{};
+        int x{};
+        getmaxyx(stdscr, y, x);
+        m_win = newwin(y, x - 4, 0, 4);
+        keypad(m_win, true);
+    }
+
+    ~Window() { delwin(m_win); }
     
-    void updateWindow(int y, int x);
-    int getLineLength(int line);
-    WINDOW* getWin() const;
-
-    std::vector<std::string> getData() const;
-    void appendData(int lineNum, int ch);
-    void popData(int line);
-
-    void newLine();
-    void delLine();
+    void resetWindow(int y, int x)
+    {
+        delwin(m_win);
+        m_win = newwin(y, x - 4, 0, 4);
+    }
+    WINDOW* getWin() const { return m_win; } // maybe make const
 
 private:
     WINDOW* m_win{};
-    std::vector<std::string> m_data{""};
 };
 
 #endif

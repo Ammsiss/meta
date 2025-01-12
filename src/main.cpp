@@ -6,12 +6,14 @@
 #include <atomic>
 
 #include "resizeHandle.h"
+#include "window.h"
+#include "editor.h"
 
 static void initCurses()
 {
     initscr();
     cbreak();
-    noecho();
+    noecho(); 
     start_color();
     use_default_colors();
     refresh();
@@ -24,51 +26,46 @@ int main()
     initCurses();
 
     Window mainW{};
-    keypad(mainW.getWin(), true);
+    Editor mainE{};
     
     halfdelay(1);
     while (true)
     {
-        ResizeHandle::resize(mainW);
+        ResizeHandle::resize(mainW, mainE);
 
-        int input{};
-        input = wgetch(mainW.getWin());
+        mainE.setInput(mainW);
+        mainE.updateCursor(mainW);
 
-        int cy{};
-        int cx{};
-        getyx(mainW.getWin(), cy, cx);
-
-        if (input != ERR)
+        if (mainE.getInput() != ERR)
         {
             // newline
-            if (input == 10)
+            if (mainE.getInput() == 10)
             {
-                mainW.appendData(cy, 10);
-                mainW.newLine();
-                wprintw(mainW.getWin(), "%c", '\n');
+                mainE.print(mainW);
+                mainE.addLine();
             }
 
             // Printable characters
-            if (input >= 32 && input <= 126)
+            if (mainE.getInput() >= 32 && mainE.getInput() <= 126)
             {
-                mainW.appendData(cy, input);
-                wprintw(mainW.getWin(), "%c", input);
+                mainE.print(mainW);
             }
-            
+
             // Delete key and backspace
-            if (input == 8 || input == 127)
+            if (mainE.getInput() == 8 || mainE.getInput() == 127)
             {
-                if (cx > 0)
+                if (mainE.getCursor().x > 0)
                 {
-                    mainW.popData(cy); 
-                    mvwprintw(mainW.getWin(), cy, cx - 1, " "); 
-                    wmove(mainW.getWin(), cy, cx - 1);
+                    mainE.popLetter();
+                    mvwprintw(mainW.getWin(), mainE.getCursor().y, mainE.getCursor().x - 1, " "); 
+                    wmove(mainW.getWin(), mainE.getCursor().y, mainE.getCursor().x - 1);
                 }
-                else if (cy > 0)
+                else if (mainE.getCursor().y > 0)
                 {
-                    mainW.delLine();
-                    mainW.popData(cy - 1);
-                    wmove(mainW.getWin(), cy - 1, mainW.getLineLength(cy - 1));
+                    mainE.popLine();
+                    wmove(mainW.getWin(), mainE.getCursor().y - 1, static_cast<int>(std::size(mainE.getData()[static_cast<size_t>(mainE.getCursor().y) - 1]) - 1));
+                    mainE.setCursor(Point2D{ mainE.getCursor().y - 1, static_cast<int>(std::size(mainE.getData()[static_cast<size_t>(mainE.getCursor().y) - 1]) - 1)});
+                    mainE.popLetter();
                 }
             }
         } 
