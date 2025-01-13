@@ -16,9 +16,9 @@ public:
     Window& operator=(const Window&) = delete;
 
     Window(Point2D dimensions, Point2D position)
-    : m_dimensions { dimensions }, m_position { position }
+    : m_dimensions { dimensions }
     {
-        m_win = newwin(m_dimensions.y, m_dimensions.x, m_position.y, m_position.x);
+        m_win = newwin(m_dimensions.y, m_dimensions.x, position.y, position.x);
         keypad(m_win, true);
     }
 
@@ -26,15 +26,10 @@ public:
 
     // getters/setters
     WINDOW* getWin() const { return m_win; }
+    Point2D getDimensions() const { return m_dimensions; }
     void setDimensions(Point2D dimensions) { m_dimensions = dimensions; }
 
     // methods
-    void resetWindow()
-    {
-        delwin(m_win);
-        m_win = newwin(m_dimensions.y, m_dimensions.x, m_position.y, m_position.x);
-    }
-
     void renderContent(const std::deque<std::string>& data)
     {
         wmove(m_win, 0, 0);
@@ -48,7 +43,6 @@ public:
 private:    
     WINDOW* m_win{};
     Point2D m_dimensions{};
-    Point2D m_position{};
 };
 
 #endif

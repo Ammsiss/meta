@@ -13,31 +13,19 @@
 class ResizeHandle
 {
 public:
-    static void setFlag(int sig)
-    {
-        if (sig == SIGWINCH)
-            s_resizeFlag.store(true);
-    }
-
     static void resize(Window& win)
     {
-        if (s_resizeFlag.load())
+        int y{};
+        int x{};
+        getTerminalSize(y, x);
+    
+        if (previousSize.y != y || previousSize.x != x)
         {
-            int y{};
-            int x{};
-            getTerminalSize(y, x);
-            resizeterm(y, x);
-            win.setDimensions(Point2D{ y, x });
-            win.resetWindow();
-
-            s_resizeFlag.store(false);
+            win.setDimensions(Point2D{ y, x - 4 }); 
+            wresize(win.getWin(), win.getDimensions().y, win.getDimensions().x);
         }
     }
-
-private:
-    // variables
-    static inline std::atomic<bool> s_resizeFlag{ false };
-
+ 
     // methods
     static void getTerminalSize(int& rows, int& cols)
     {
@@ -54,6 +42,13 @@ private:
             cols = ws.ws_col;
         }
     }
+
+    static void initialize()
+    {
+        getTerminalSize(previousSize.y, previousSize.x);
+    }
+
+    static inline Point2D previousSize{};
 };
 
 #endif

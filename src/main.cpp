@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <atomic>
+#include <thread>
+#include <chrono>
 
 #include "resizeHandle.h"
 #include "window.h"
@@ -19,7 +21,7 @@ static void initCurses()
     use_default_colors();
     refresh();
     set_escdelay(50);
-    signal(SIGWINCH, ResizeHandle::setFlag);
+    ResizeHandle::initialize();
 }
 
 int main()
@@ -31,8 +33,8 @@ int main()
     getmaxyx(stdscr, y, x);
     Window mainW{ Point2D{ y, x - 4 }, Point2D{ 0, 4 } };
     Editor mainE{};
-    
-    halfdelay(1);
+ 
+    nodelay(mainW.getWin(), true);
     while (true)
     {
         ResizeHandle::resize(mainW);
@@ -43,7 +45,6 @@ int main()
         mainW.renderContent(mainE.getData());
         mainE.updateCursor(mainW.getWin());
         wrefresh(mainW.getWin());
-
 
         if (mainE.getInput() != ERR)
         {
@@ -73,7 +74,9 @@ int main()
                     mainE.popLetter();
                 }
             }
-        } 
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
 
     getch();
