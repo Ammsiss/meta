@@ -1,5 +1,5 @@
 #ifndef AGGREGATES_H
-#define AGGREAGTES_H
+#define AGGREGATES_H
 
 struct Point2D
 {

@@ -15,22 +15,16 @@ class Editor
 public:
     Editor() = default;
 
-    void updateCursor(const Window& win)
+    void updateCursor(WINDOW* win)
     {
-        getyx(win.getWin(), m_cursorPosition.y, m_cursorPosition.x);
-    }
-
-    void print(const Window& win)
-    {
-        addLetter();
-        wprintw(win.getWin(), "%c", m_input);
+        getyx(win, m_cursorPosition.y, m_cursorPosition.x);
     }
 
     // data manipulation
 
     void addLetter()
     {
-        m_data[static_cast<size_t>(m_cursorPosition.y)].push_back(m_input);
+        m_data.back().push_back(m_input);
     }
 
     void addLine()
@@ -40,7 +34,7 @@ public:
 
     void popLetter()
     {
-        m_data[static_cast<size_t>(m_cursorPosition.y)].pop_back();
+        m_data.back().pop_back();
     }
 
     void popLine()

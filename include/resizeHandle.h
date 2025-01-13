@@ -19,25 +19,26 @@ public:
             s_resizeFlag.store(true);
     }
 
-    static void resize(Window& mainW, const Editor& editor)
+    static void resize(Window& win, const Editor& editor)
     {
         if (s_resizeFlag.load())
         {
             int y{};
             int x{};
             getTerminalSize(y, x);
-            resizeterm(y, x); 
-            mainW.resetWindow(y, x);
+            resizeterm(y, x);
+            win.setDimensions(Point2D{ y, x }); 
+            win.resetWindow();
 
-            wmove(mainW.getWin(), 0, 0);
+            wmove(win.getWin(), 0, 0);
 
             // SHOULD NOT BE HERE
             for(const auto& line : editor.getData())
             {
-                wprintw(mainW.getWin(), line.c_str());
+                wprintw(win.getWin(), line.c_str());
             }
 
-            wrefresh(mainW.getWin());
+            wrefresh(win.getWin());
             s_resizeFlag.store(false);
         }
     }

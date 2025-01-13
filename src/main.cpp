@@ -8,6 +8,7 @@
 #include "resizeHandle.h"
 #include "window.h"
 #include "editor.h"
+#include "aggregates.h"
 
 static void initCurses()
 {
@@ -25,30 +26,38 @@ int main()
 {
     initCurses();
 
-    Window mainW{};
+    int y{};
+    int x{};
+    getmaxyx(stdscr, y, x);
+    Window mainW{ Point2D{ y, x - 4 }, Point2D{ 0, 4 } };
     Editor mainE{};
     
     halfdelay(1);
     while (true)
     {
         ResizeHandle::resize(mainW, mainE);
-
+         
         mainE.setInput(mainW);
-        mainE.updateCursor(mainW);
+
+        wclear(mainW.getWin());
+        mainW.renderContent(mainE.getData());
+        mainE.updateCursor(mainW.getWin());
+        wrefresh(mainW.getWin());
+
 
         if (mainE.getInput() != ERR)
         {
             // newline
             if (mainE.getInput() == 10)
             {
-                mainE.print(mainW);
+                mainE.addLetter();
                 mainE.addLine();
             }
 
             // Printable characters
             if (mainE.getInput() >= 32 && mainE.getInput() <= 126)
             {
-                mainE.print(mainW);
+                mainE.addLetter();
             }
 
             // Delete key and backspace
@@ -56,21 +65,15 @@ int main()
             {
                 if (mainE.getCursor().x > 0)
                 {
-                    mainE.popLetter();
-                    mvwprintw(mainW.getWin(), mainE.getCursor().y, mainE.getCursor().x - 1, " "); 
-                    wmove(mainW.getWin(), mainE.getCursor().y, mainE.getCursor().x - 1);
+                    mainE.popLetter(); 
                 }
                 else if (mainE.getCursor().y > 0)
                 {
                     mainE.popLine();
-                    wmove(mainW.getWin(), mainE.getCursor().y - 1, static_cast<int>(std::size(mainE.getData()[static_cast<size_t>(mainE.getCursor().y) - 1]) - 1));
-                    mainE.setCursor(Point2D{ mainE.getCursor().y - 1, static_cast<int>(std::size(mainE.getData()[static_cast<size_t>(mainE.getCursor().y) - 1]) - 1)});
                     mainE.popLetter();
                 }
             }
         } 
-
-        wrefresh(mainW.getWin());
     }
 
     getch();

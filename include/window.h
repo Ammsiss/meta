@@ -4,35 +4,51 @@
 #include <ncurses.h>
 
 #include <string>
-#include <vector>
+#include <deque>
+
+#include "aggregates.h"
 
 class Window
 {
 public:
+    // constructors/destructors
+
     // Delete copy stuff so no shallow copy
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
-    Window()
+    Window(Point2D dimensions, Point2D position)
+    : m_dimensions { dimensions }, m_position { position }
     {
-        int y{};
-        int x{};
-        getmaxyx(stdscr, y, x);
-        m_win = newwin(y, x - 4, 0, 4);
+        m_win = newwin(m_dimensions.y, m_dimensions.x, m_position.y, m_position.x);
         keypad(m_win, true);
     }
 
     ~Window() { delwin(m_win); }
-    
-    void resetWindow(int y, int x)
+
+    WINDOW* getWin() const { return m_win; }
+    void setDimensions(Point2D dimensions) { m_dimensions = dimensions; }
+
+    void resetWindow()
     {
         delwin(m_win);
-        m_win = newwin(y, x - 4, 0, 4);
+        m_win = newwin(m_dimensions.y, m_dimensions.x, m_position.y, m_position.x);
     }
-    WINDOW* getWin() const { return m_win; } // maybe make const
 
-private:
+    void renderContent(const std::deque<std::string>& data)
+    {
+        wmove(m_win, 0, 0);
+
+        for(const auto& line : data)
+        {
+            wprintw(m_win, line.c_str());
+        }
+    }
+
+private:    
     WINDOW* m_win{};
+    Point2D m_dimensions{};
+    Point2D m_position{};
 };
 
 #endif
