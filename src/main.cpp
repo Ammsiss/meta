@@ -35,7 +35,7 @@ int main()
     halfdelay(1);
     while (true)
     {
-        ResizeHandle::resize(mainW, mainE);
+        ResizeHandle::resize(mainW);
          
         mainE.setInput(mainW);
 

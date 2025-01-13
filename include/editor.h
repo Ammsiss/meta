@@ -13,14 +13,23 @@
 class Editor
 {
 public:
+    // constructors/destructors
     Editor() = default;
 
+    // getters/setters
+    int getInput() const { return m_input; }
+    void setInput(const Window& win) { m_input = static_cast<char>(wgetch(win.getWin())); }
+
+    Point2D getCursor() const { return m_cursorPosition; }
+    void setCursor(Point2D cursorPosition) { m_cursorPosition = cursorPosition; }
+
+    const std::deque<std::string>& getData() const { return m_data; }
+
+    // methods
     void updateCursor(WINDOW* win)
     {
         getyx(win, m_cursorPosition.y, m_cursorPosition.x);
     }
-
-    // data manipulation
 
     void addLetter()
     {
@@ -41,15 +50,6 @@ public:
     {
         m_data.pop_back();
     }
-
-    // getters / setters
-    int getInput() const { return m_input; }
-    void setInput(const Window& win) { m_input = static_cast<char>(wgetch(win.getWin())); }
-
-    const std::deque<std::string>& getData() const { return m_data; }
-
-    Point2D getCursor() const { return m_cursorPosition; }
-    void setCursor(Point2D cursorPosition) { m_cursorPosition = cursorPosition; }
 
 private:
     Point2D m_cursorPosition{};

@@ -12,8 +12,6 @@ class Window
 {
 public:
     // constructors/destructors
-
-    // Delete copy stuff so no shallow copy
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
@@ -26,9 +24,11 @@ public:
 
     ~Window() { delwin(m_win); }
 
+    // getters/setters
     WINDOW* getWin() const { return m_win; }
     void setDimensions(Point2D dimensions) { m_dimensions = dimensions; }
 
+    // methods
     void resetWindow()
     {
         delwin(m_win);
