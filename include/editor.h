@@ -18,22 +18,15 @@ public:
 
     // getters/setters
     int getInput() const { return m_input; }
-    void setInput(const Window& win) { m_input = static_cast<char>(wgetch(win.getWin())); }
-
-    Point2D getCursor() const { return m_cursorPosition; }
-    void setCursor(Point2D cursorPosition) { m_cursorPosition = cursorPosition; }
+    void setInput(int input) { m_input = input; }
 
     const std::deque<std::string>& getData() const { return m_data; }
 
     // methods
-    void updateCursor(WINDOW* win)
-    {
-        getyx(win, m_cursorPosition.y, m_cursorPosition.x);
-    }
 
     void addLetter()
     {
-        m_data.back().push_back(m_input);
+        m_data.back().push_back(static_cast<char>(m_input));
     }
 
     void addLine()
@@ -51,10 +44,16 @@ public:
         m_data.pop_back();
     }
 
+    int getLineLength(int line) const
+    {
+        return static_cast<int>(std::ssize(m_data[static_cast<size_t>(line)]));
+    }
+
+
 private:
-    Point2D m_cursorPosition{};
-    char m_input{};
+    int m_input{};
     std::deque<std::string> m_data{""};
+    int m_lineNum{};
 };
 
 #endif

@@ -26,10 +26,17 @@ public:
 
     // getters/setters
     WINDOW* getWin() const { return m_win; }
+
     Point2D getDimensions() const { return m_dimensions; }
     void setDimensions(Point2D dimensions) { m_dimensions = dimensions; }
 
     // methods
+
+    void clearWindow()
+    {
+        wclear(m_win);
+    }
+
     void renderContent(const std::deque<std::string>& data)
     {
         wmove(m_win, 0, 0);
@@ -40,7 +47,7 @@ public:
         }
     }
 
-private:    
+private:
     WINDOW* m_win{};
     Point2D m_dimensions{};
 };
