@@ -3,12 +3,10 @@
 
 #include <ncurses.h>
 
-#include <atomic>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
 #include "window.h"
-#include "editor.h"
 
 class ResizeHandle
 {

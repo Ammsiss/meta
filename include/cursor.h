@@ -28,6 +28,7 @@ public:
 
     void printCursor(const Window& win) const
     {
+        
         mvwprintw(win.getWin(), m_cursorPosition.y, m_cursorPosition.x, "%c", m_cursor);
     }
     

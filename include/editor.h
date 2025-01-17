@@ -7,9 +7,6 @@
 #include <deque>
 #include <string>
 
-#include "aggregates.h"
-#include "window.h"
-
 class Editor
 {
 public:
@@ -47,13 +44,13 @@ public:
     int getLineLength(int line) const
     {
         return static_cast<int>(std::ssize(m_data[static_cast<size_t>(line)]));
+        
     }
 
 
 private:
     int m_input{};
     std::deque<std::string> m_data{""};
-    int m_lineNum{};
 };
 
 #endif

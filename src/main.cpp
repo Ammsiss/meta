@@ -1,9 +1,5 @@
 #include <ncurses.h>
-#include <signal.h>
 
-#include <vector>
-#include <string>
-#include <atomic>
 #include <thread>
 #include <chrono>
 
@@ -12,6 +8,8 @@
 #include "editor.h"
 #include "cursor.h"
 #include "aggregates.h"
+
+// delete me
 
 static void initCurses()
 {
