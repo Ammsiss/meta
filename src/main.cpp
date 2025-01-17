@@ -9,8 +9,6 @@
 #include "cursor.h"
 #include "aggregates.h"
 
-// delete me
-
 static void initCurses()
 {
     initscr();
