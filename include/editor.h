@@ -23,7 +23,13 @@ public:
 
     void addLetter()
     {
-        m_data.back().push_back(static_cast<char>(m_input));
+        if (static_cast<char>(m_input) == '%')
+        {
+            m_data.back().push_back(static_cast<char>(m_input));
+            m_data.back().push_back(static_cast<char>(m_input));
+        }
+        else
+            m_data.back().push_back(static_cast<char>(m_input));
     }
 
     void addLine()
@@ -33,7 +39,13 @@ public:
 
     void popLetter()
     {
-        m_data.back().pop_back();
+        if (m_data.back().back() == '%')
+        {
+            m_data.back().pop_back();
+            m_data.back().pop_back();
+        }
+        else
+            m_data.back().pop_back();
     }
 
     void popLine()

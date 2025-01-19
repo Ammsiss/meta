@@ -6,6 +6,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#include "aggregates.h"
 #include "window.h"
 
 class ResizeHandle
@@ -13,13 +14,12 @@ class ResizeHandle
 public:
     static void resize(Window& win)
     {
-        int y{};
-        int x{};
-        getTerminalSize(y, x);
+        Point2d dimensions{};
+        getTerminalSize(dimensions.y, dimensions.x);
     
-        if (previousSize.y != y || previousSize.x != x)
+        if (previousSize.y != dimensions.y || previousSize.x != dimensions.x)
         {
-            win.setDimensions(Point2D{ y, x - 4 }); 
+            win.setDimensions(Point2d{ dimensions.y, dimensions.x}); 
             wresize(win.getWin(), win.getDimensions().y, win.getDimensions().x);
         }
     }
@@ -46,7 +46,7 @@ public:
         getTerminalSize(previousSize.y, previousSize.x);
     }
 
-    static inline Point2D previousSize{};
+    static inline Point2d previousSize{};
 };
 
 #endif

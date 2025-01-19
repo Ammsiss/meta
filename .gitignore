@@ -1,6 +1,7 @@
 build/
 .vscode/
-meta
+main
 .DS_Store
 compile_commands.json
 .cache/
+ncurses-6.5/

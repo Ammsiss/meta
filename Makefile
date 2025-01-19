@@ -1,4 +1,4 @@
-BINARY = meta
+BINARY = main
 CODEDIRS = . ./src
 INCDIRS = . ./include
 

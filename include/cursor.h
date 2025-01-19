@@ -4,15 +4,16 @@
 #include <ncurses.h>
 
 #include "aggregates.h"
-#include "window.h"
+
+class Window;
 
 class Cursor
 {
 public:
-    Cursor(Point2D cursorPosition)
+    Cursor(Point2d cursorPosition)
     : m_cursorPosition { cursorPosition } {}
 
-    void setCursor(Point2D delta, int hOffset = -1)
+    void setCursor(Point2d delta, int hOffset = -1)
     {
         m_cursorPosition.y += delta.y;
         m_cursorPosition.x += delta.x;
@@ -21,20 +22,13 @@ public:
             m_cursorPosition.x = hOffset;
     }
 
-    Point2D getCursor() const
+    Point2d getCursor() const
     {
         return m_cursorPosition;
     }
-
-    void printCursor(const Window& win) const
-    {
-        
-        mvwprintw(win.getWin(), m_cursorPosition.y, m_cursorPosition.x, "%c", m_cursor);
-    }
     
 private:
-    Point2D m_cursorPosition{};
-    char m_cursor{ '|' };
+    Point2d m_cursorPosition{};
 };
 
 #endif

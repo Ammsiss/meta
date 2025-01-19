@@ -26,13 +26,17 @@ int main()
 {
     initCurses();
 
-    int y{};
-    int x{};
-    getmaxyx(stdscr, y, x);
-    Window mainW{ Point2D{ y, x - 4 }, Point2D{ 0, 4 } };
+    // init main window
+    Window mainW{};
+
+    // init editor
     Editor mainE{};
-    Cursor mainC{ Point2D{ 0, 0 } };
-    mainC.printCursor(mainW);
+
+    // init cursor
+    Cursor mainC{ Point2d{ 0, 0 } };
+
+    // render cursor here
+    mainW.renderCursor(mainC, mainE);
  
     nodelay(mainW.getWin(), true);
     while (true)
@@ -40,52 +44,63 @@ int main()
         ResizeHandle::resize(mainW);
 
         mainE.setInput(wgetch(mainW.getWin()));
+
         if (mainE.getInput() != ERR)
         {
             // newline
             if (mainE.getInput() == 10)
             {
                 // Data structure editing
-                mainE.addLetter();
                 mainE.addLine();
 
                 // cursor editing
-                mainC.setCursor(Point2D{ 1, 0 }, 0);
+                mainC.setCursor(Point2d{ 1, 0 }, 0);
             }
 
             // Printable characters
-            if (mainE.getInput() >= 32 && mainE.getInput() <= 126)
+            else if (mainE.getInput() >= 32 && mainE.getInput() <= 126)
             {
                 // data structure editing
                 mainE.addLetter();
 
                 // cursor editing
-                mainC.setCursor(Point2D{ 0, 1 });
+                mainC.setCursor(Point2d{ 0, 1 });
             }
 
             // Delete key and backspace
-            if (mainE.getInput() == 8 || mainE.getInput() == 127)
+            else if (mainE.getInput() == 8 || mainE.getInput() == 127)
             {
                 if (mainC.getCursor().x > 0)
                 {
                     mainE.popLetter();
-                    mainC.setCursor(Point2D{ 0, -1 });
+                    mainC.setCursor(Point2d{ 0, -1 });
                 }
                 else if (mainC.getCursor().y > 0)
                 {
                     mainE.popLine();
-                    mainE.popLetter();
-                    mainC.setCursor(Point2D{ -1, 0 }, mainE.getLineLength(mainC.getCursor().y - 1));
+                    mainC.setCursor(Point2d{ -1, 0 }, mainE.getLineLength(mainC.getCursor().y - 1));
                 }
-            }            
+            }
+
+            else if (mainE.getInput() == KEY_LEFT)
+            {
+                if (mainC.getCursor().x != 0)
+                    mainC.setCursor(Point2d{ 0, -1 });
+            }
+
+            else if (mainE.getInput() == KEY_RIGHT)
+            {
+                if (mainC.getCursor().x != mainE.getLineLength(mainC.getCursor().y))
+                    mainC.setCursor(Point2d{ 0, 1 });
+            }        
 
             mainW.clearWindow(); 
             mainW.renderContent(mainE.getData());
-            mainC.printCursor(mainW);
+            mainW.renderCursor(mainC, mainE);
             wrefresh(mainW.getWin()); 
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
  
     endwin();
