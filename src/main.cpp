@@ -61,7 +61,7 @@ int main()
             else if (mainE.getInput() >= 32 && mainE.getInput() <= 126)
             {
                 // data structure editing
-                mainE.addLetter();
+                mainE.addLetter(mainC);
 
                 // cursor editing
                 mainC.setCursor(Point2d{ 0, 1 });
@@ -72,7 +72,7 @@ int main()
             {
                 if (mainC.getCursor().x > 0)
                 {
-                    mainE.popLetter();
+                    mainE.popLetter(mainC);
                     mainC.setCursor(Point2d{ 0, -1 });
                 }
                 else if (mainC.getCursor().y > 0)

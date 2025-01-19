@@ -7,6 +7,8 @@
 #include <deque>
 #include <string>
 
+#include "cursor.h"
+
 class Editor
 {
 public:
@@ -21,15 +23,19 @@ public:
 
     // methods
 
-    void addLetter()
-    {
-        if (static_cast<char>(m_input) == '%')
+    void addLetter(const Cursor& cursor)
+    { 
+        const Point2d curP{ cursor.getCursor() };
+        const std::size_t lineNum{ static_cast<size_t>(curP.y) };
+
+        if (curP.x == getLineLength(curP.y))
         {
-            m_data.back().push_back(static_cast<char>(m_input));
-            m_data.back().push_back(static_cast<char>(m_input));
-        }
+            m_data[lineNum].push_back(static_cast<char>(m_input));
+        } 
         else
-            m_data.back().push_back(static_cast<char>(m_input));
+        {
+            m_data[lineNum].insert(m_data[lineNum].begin() + curP.x, static_cast<char>(m_input));
+        }
     }
 
     void addLine()
@@ -37,15 +43,12 @@ public:
         m_data.push_back("");
     }
 
-    void popLetter()
+    void popLetter(const Cursor& cursor)
     {
-        if (m_data.back().back() == '%')
-        {
-            m_data.back().pop_back();
-            m_data.back().pop_back();
-        }
-        else
-            m_data.back().pop_back();
+        const Point2d curP{ cursor.getCursor() };
+        const std::size_t lineNum{ static_cast<size_t>(curP.y) };
+
+        m_data[lineNum].erase(m_data[lineNum].begin() + curP.x - 1);
     }
 
     void popLine()
@@ -55,8 +58,7 @@ public:
 
     int getLineLength(int line) const
     {
-        return static_cast<int>(std::ssize(m_data[static_cast<size_t>(line)]));
-        
+        return static_cast<int>(std::ssize(m_data[static_cast<size_t>(line)])); 
     }
 
 
