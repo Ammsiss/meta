@@ -51,7 +51,7 @@ int main()
             if (mainE.getInput() == 10)
             {
                 // Data structure editing
-                mainE.addLine();
+                mainE.addLine(mainC);
 
                 // cursor editing
                 mainC.setCursor(Point2d{ 1, 0 }, 0);
@@ -77,8 +77,9 @@ int main()
                 }
                 else if (mainC.getCursor().y > 0)
                 {
-                    mainE.popLine();
+                    Point2d curP{ mainC.getCursor() };
                     mainC.setCursor(Point2d{ -1, 0 }, mainE.getLineLength(mainC.getCursor().y - 1));
+                    mainE.popLine(curP.y, curP.x);
                 }
             }
 
@@ -92,7 +93,7 @@ int main()
             {
                 if (mainC.getCursor().x != mainE.getLineLength(mainC.getCursor().y))
                     mainC.setCursor(Point2d{ 0, 1 });
-            }        
+            }
 
             mainW.clearWindow(); 
             mainW.renderContent(mainE.getData());
