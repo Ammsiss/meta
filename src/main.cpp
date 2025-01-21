@@ -95,6 +95,28 @@ int main()
                     mainC.setCursor(Point2d{ 0, 1 });
             }
 
+            else if (mainE.getInput() == KEY_UP)
+            {
+                if (mainC.getCursor().y != 0)
+                {
+                    if (mainC.getCursor().x <= mainE.getLineLength(mainC.getCursor().y - 1))
+                        mainC.setCursor(Point2d{ -1, 0 });
+                    else
+                        mainC.setCursor(Point2d{ -1, 0 }, mainE.getLineLength(mainC.getCursor().y - 1));
+                }
+            }
+
+            else if (mainE.getInput() == KEY_DOWN)
+            {
+                if (mainC.getCursor().y != static_cast<int>(mainE.getData().size()) - 1)
+                {
+                    if (mainC.getCursor().x <= mainE.getLineLength(mainC.getCursor().y + 1))
+                        mainC.setCursor(Point2d{ 1, 0 });
+                    else
+                        mainC.setCursor(Point2d{ 1, 0 }, mainE.getLineLength(mainC.getCursor().y + 1));
+                }
+            }
+
             mainW.clearWindow(); 
             mainW.renderContent(mainE.getData());
             mainW.renderCursor(mainC, mainE);
