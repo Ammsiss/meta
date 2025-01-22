@@ -50,21 +50,19 @@ int main()
             // newline
             if (mainE.getInput() == 10)
             {
-                // Data structure editing
                 mainE.addLine(mainC);
 
-                // cursor editing
                 mainC.setCursor(Point2d{ 1, 0 }, 0);
+                mainC.setCachedX(0);
             }
 
             // Printable characters
             else if (mainE.getInput() >= 32 && mainE.getInput() <= 126)
             {
-                // data structure editing
                 mainE.addLetter(mainC);
 
-                // cursor editing
                 mainC.setCursor(Point2d{ 0, 1 });
+                mainC.setCachedX(mainC.getCursor().x);
             }
 
             // Delete key and backspace
@@ -73,36 +71,51 @@ int main()
                 if (mainC.getCursor().x > 0)
                 {
                     mainE.popLetter(mainC);
+
                     mainC.setCursor(Point2d{ 0, -1 });
+                    mainC.setCachedX(mainC.getCursor().x);                    
                 }
                 else if (mainC.getCursor().y > 0)
                 {
                     Point2d curP{ mainC.getCursor() };
-                    mainC.setCursor(Point2d{ -1, 0 }, mainE.getLineLength(mainC.getCursor().y - 1));
-                    mainE.popLine(curP.y, curP.x);
+
+                    mainE.popLine(curP.y);
+                    
+                    mainC.setCursor(Point2d{ -1, 0 }, mainE.getLineLength(curP.y - 1));
+                    mainC.setCachedX(mainC.getCursor().x);
                 }
             }
 
             else if (mainE.getInput() == KEY_LEFT)
             {
                 if (mainC.getCursor().x != 0)
+                {
                     mainC.setCursor(Point2d{ 0, -1 });
+                    mainC.setCachedX(mainC.getCursor().x);
+                }
             }
 
             else if (mainE.getInput() == KEY_RIGHT)
             {
                 if (mainC.getCursor().x != mainE.getLineLength(mainC.getCursor().y))
+                {
                     mainC.setCursor(Point2d{ 0, 1 });
+                    mainC.setCachedX(mainC.getCursor().x);
+                }
             }
 
             else if (mainE.getInput() == KEY_UP)
             {
                 if (mainC.getCursor().y != 0)
                 {
-                    if (mainC.getCursor().x <= mainE.getLineLength(mainC.getCursor().y - 1))
-                        mainC.setCursor(Point2d{ -1, 0 });
+                    if (mainC.getCahcedX() <= mainE.getLineLength(mainC.getCursor().y - 1))
+                    {
+                        mainC.setCursor(Point2d{ -1, 0 }, mainC.getCahcedX());
+                    }
                     else
+                    {
                         mainC.setCursor(Point2d{ -1, 0 }, mainE.getLineLength(mainC.getCursor().y - 1));
+                    }
                 }
             }
 
@@ -110,16 +123,22 @@ int main()
             {
                 if (mainC.getCursor().y != static_cast<int>(mainE.getData().size()) - 1)
                 {
-                    if (mainC.getCursor().x <= mainE.getLineLength(mainC.getCursor().y + 1))
-                        mainC.setCursor(Point2d{ 1, 0 });
+                    if (mainC.getCahcedX() <= mainE.getLineLength(mainC.getCursor().y + 1))
+                    {
+                        mainC.setCursor(Point2d{ 1, 0 }, mainC.getCahcedX());
+                    }
                     else
+                    {
                         mainC.setCursor(Point2d{ 1, 0 }, mainE.getLineLength(mainC.getCursor().y + 1));
+                    }
                 }
             }
 
             mainW.clearWindow(); 
             mainW.renderContent(mainE.getData());
             mainW.renderCursor(mainC, mainE);
+
+            mvwprintw(mainW.getWin(), 15, 15, "%d", mainC.getCahcedX());
             wrefresh(mainW.getWin()); 
         }
 
@@ -128,3 +147,7 @@ int main()
  
     endwin();
 }
+
+
+// new line resets to 0
+// x movement changes the value and typing

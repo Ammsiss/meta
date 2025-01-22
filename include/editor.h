@@ -57,9 +57,9 @@ public:
         }
     }
 
-    void popLine(int curY, int curX)
+    void popLine(int curY)
     {
-        if (curX != getLineLength(curY))
+        if (getLineLength(curY) != 0)
         {
             std::string str{ m_data[static_cast<size_t>(curY)] };
             m_data.erase(m_data.begin() + curY);

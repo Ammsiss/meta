@@ -26,9 +26,20 @@ public:
     {
         return m_cursorPosition;
     }
+
+    void setCachedX(int cachedX)
+    {
+        m_cachedX = cachedX;
+    }
+
+    int getCahcedX() const
+    {
+        return m_cachedX;
+    }
     
 private:
     Point2d m_cursorPosition{};
+    int m_cachedX{};
 };
 
 #endif
