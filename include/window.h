@@ -17,20 +17,19 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
+    // remove ncurses functions
     Window()
     {
         Point2d dimensions{};
         getmaxyx(stdscr, dimensions.y, dimensions.x);
         m_dimensions = dimensions;
         m_win = newwin(dimensions.y, dimensions.x, 0, 0);
-        keypad(m_win, true);
     }
 
     Window(Point2d dimensions, Point2d position)
     : m_dimensions { dimensions }
     {
         m_win = newwin(m_dimensions.y, m_dimensions.x, position.y, position.x);
-        keypad(m_win, true);
     }
 
     ~Window() { delwin(m_win); }

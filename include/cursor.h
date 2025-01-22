@@ -10,6 +10,8 @@ class Window;
 class Cursor
 {
 public:
+    Cursor() = default;
+
     Cursor(Point2d cursorPosition)
     : m_cursorPosition { cursorPosition } {}
 
