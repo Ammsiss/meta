@@ -7,12 +7,12 @@ struct Point2d
     int x{};
 };
 
-namespace Constants
+namespace KEY
 {
-    inline constexpr int newline{ 10 };
-    inline constexpr int backspace{ 127 };
-    inline constexpr int printableCharMin{ 32 };
-    inline constexpr int printableCharMax{ 126 };
+    inline constexpr int NEWLINE{ 10 };
+    inline constexpr int BACKSPACE{ 127 };
+    inline constexpr int CHARMIN{ 32 };
+    inline constexpr int CHARMAX{ 126 };
 }
 
 #endif

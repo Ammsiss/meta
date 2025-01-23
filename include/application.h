@@ -39,62 +39,42 @@ public:
 
     void handleInput()
     {
-        if (m_editor.getInput() == Constants::newline)
-        {
-            handleNewline();
-        }
-        else if (m_editor.getInput() >= Constants::printableCharMin && m_editor.getInput() <= Constants::printableCharMax)
-        {
+        const int input{ m_editor.getInput() };
+        const bool isPrintableChar{ input >= KEY::CHARMIN && input <= KEY::CHARMAX };
+
+        if (isPrintableChar)
             handleCharacter();
-        }
-        else if (m_editor.getInput() == Constants::backspace)
+        else
         {
-            if (m_cursor.getCursor().x > 0)
-                handleDeleteCharacter();
-            else if (m_cursor.getCursor().y > 0)
-                handleDeleteLine();
-        }
-        else if (m_editor.getInput() == KEY_LEFT)
-        {
-            if (m_cursor.getCursor().x != 0)
+            switch (input)
             {
-                m_cursor.setCursor(Point2d{ 0, -1 });
-                m_cursor.setCachedX(m_cursor.getCursor().x);
+            case KEY::NEWLINE: handleNewline(); 
+                break; 
+            case KEY::BACKSPACE: handleBackspace(); 
+                break;
+            case KEY_LEFT: handleLeft(); 
+                break;
+            case KEY_RIGHT: handleRight(); 
+                break;
+            case KEY_DOWN: handleDown(); 
+                break;
+            case KEY_UP: handleUp(); 
+                break;
+            default: 
+                break;
             }
         }
-        else if (m_editor.getInput() == KEY_RIGHT)
-        {
-            if (m_cursor.getCursor().x != m_editor.getLineLength(m_cursor.getCursor().y))
-            {
-                m_cursor.setCursor(Point2d{ 0, 1 });
-                m_cursor.setCachedX(m_cursor.getCursor().x);
-            }
-        }
-        else if (m_editor.getInput() == KEY_UP)
-        {
-            Point2d curP{ m_cursor.getCursor() };
-            int cachedX{ m_cursor.getCahcedX() };
+    }
 
-            if (curP.y != 0)
-            {
-                if (cachedX <= m_editor.getLineLength(curP.y - 1))
-                    m_cursor.setCursor(Point2d{ -1, 0 }, cachedX);
-                else
-                    m_cursor.setCursor(Point2d{ -1, 0 }, m_editor.getLineLength(curP.y - 1));
-            }
-        }
-        else if (m_editor.getInput() == KEY_DOWN)
+    void handleBackspace()
+    {
+        if (m_cursor.getCursor().x > 0)
         {
-            Point2d curP{ m_cursor.getCursor() };
-            int cachedX{ m_cursor.getCahcedX() };
-
-            if (curP.y != static_cast<int>(m_editor.getData().size()) - 1)
-            {
-                if (cachedX <= m_editor.getLineLength(curP.y + 1))
-                    m_cursor.setCursor(Point2d{ 1, 0 }, cachedX);
-                else
-                    m_cursor.setCursor(Point2d{ 1, 0 }, m_editor.getLineLength(curP.y + 1));
-            }
+            handleDeleteCharacter();
+        }
+        else if (m_cursor.getCursor().y > 0)
+        {
+            handleDeleteLine();
         }
     }
 
@@ -132,6 +112,52 @@ public:
         m_cursor.setCachedX(m_cursor.getCursor().x); 
 
         m_editor.popLine(curY);    
+    }
+
+    void handleUp()
+    {
+        Point2d curP{ m_cursor.getCursor() };
+        int cachedX{ m_cursor.getCahcedX() };
+
+        if (curP.y != 0)
+        {
+            if (cachedX <= m_editor.getLineLength(curP.y - 1))
+                m_cursor.setCursor(Point2d{ -1, 0 }, cachedX);
+            else
+                m_cursor.setCursor(Point2d{ -1, 0 }, m_editor.getLineLength(curP.y - 1));
+        }
+    }
+
+    void handleDown()
+    {
+        Point2d curP{ m_cursor.getCursor() };
+        int cachedX{ m_cursor.getCahcedX() };
+
+        if (curP.y != static_cast<int>(m_editor.getData().size()) - 1)
+        {
+            if (cachedX <= m_editor.getLineLength(curP.y + 1))
+                m_cursor.setCursor(Point2d{ 1, 0 }, cachedX);
+            else
+                m_cursor.setCursor(Point2d{ 1, 0 }, m_editor.getLineLength(curP.y + 1));
+        }
+    }
+
+    void handleLeft()
+    {
+        if (m_cursor.getCursor().x != 0)
+        {
+            m_cursor.setCursor(Point2d{ 0, -1 });
+            m_cursor.setCachedX(m_cursor.getCursor().x);
+        }
+    }
+
+    void handleRight()
+    {
+        if (m_cursor.getCursor().x != m_editor.getLineLength(m_cursor.getCursor().y))
+        {
+            m_cursor.setCursor(Point2d{ 0, 1 });
+            m_cursor.setCachedX(m_cursor.getCursor().x);
+        }
     }
 
     void render()
