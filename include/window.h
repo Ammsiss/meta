@@ -9,6 +9,7 @@
 #include "aggregates.h"
 #include "cursor.h"
 #include "editor.h"
+#include "resizeHandle.h"
 
 class Window
 {
@@ -51,9 +52,9 @@ public:
     {
         wmove(m_win, 0, 0);
 
-        for (const auto& line : data)
+        for (std::size_t index{ 0 }; index < data.size(); ++index)
         {
-            wprintw(m_win, "%s\n", line.c_str());
+            wprintw(m_win, "%s\n", data[index].c_str());
         }
     }
 

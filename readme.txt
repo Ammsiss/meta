@@ -1,7 +1,19 @@
 Todo:
+- Add fix for line wrapping, then deleting cauing popping of line segfault error
+- Potentailly refactor application class with Render and Input classes
+- add line numbers
+- tab support
+- add normal mode
 
-Add fix for line wrapping, then deleting cauing popping of line segfault error
+BIG GOALS
+- Scrolling
+- File IO
+- Undo/Redo
+- syntx highlighting
+- Search
+- save and quit prompts
+- navigation shortcuts
 
-add '%' parsing
-
-add cached previous x position to jump back too (std::optional<int> with string as a object for meta data association per line)
+LATER ON:
+- add dirty line tracking
+- add single character rendering
