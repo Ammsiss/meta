@@ -16,7 +16,6 @@ void Editor::popLetter(const Point2d curP)
     m_data[curY].erase(m_data[curY].begin() + curP.x - 1);
 }
 
-// Adds line below cursor, potentially splits line
 void Editor::addLine(const Point2d curP)
 {
     if (curP.x == getLineLength(curP.y))
@@ -25,20 +24,14 @@ void Editor::addLine(const Point2d curP)
     }
     else
     {
-        splitLine(curP);
+        const std::size_t curY{ static_cast<size_t>(curP.y) };
+
+        std::string subStr{ m_data[curY].substr(static_cast<size_t>(curP.x)) };
+        m_data[curY].erase(m_data[curY].begin() + curP.x, m_data[curY].end());
+        m_data.insert(m_data.begin() + curP.y + 1, subStr);
     }
 }
 
-void Editor::splitLine(const Point2d curP)
-{
-    const std::size_t curY{ static_cast<size_t>(curP.y) };
-
-    std::string subStr{ m_data[curY].substr(static_cast<size_t>(curP.x)) };
-    m_data[curY].erase(m_data[curY].begin() + curP.x, m_data[curY].end());
-    m_data.insert(m_data.begin() + curP.y + 1, subStr);
-}
-
-// Pops current line, potentially merges current line content to previous line
 void Editor::popLine(int curY)
 {
     if (getLineLength(curY) == 0)

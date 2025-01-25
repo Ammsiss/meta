@@ -53,13 +53,13 @@ public:
                 break; 
             case KEY::NEWLINE: handleNewline(); 
                 break;
-            case KEY_LEFT: // m_cursor.handleLeft(); 
+            case KEY_LEFT: m_cursor.moveLeft(); 
                 break;
-            case KEY_RIGHT: // m_cursor.handleRight(); 
+            case KEY_RIGHT: m_cursor.moveRight(m_editor); 
                 break;
-            case KEY_DOWN: // m_cursor.handleDown(); 
+            case KEY_DOWN: m_cursor.moveDown(m_editor); 
                 break;
-            case KEY_UP: // m_cursor.handleUp(); 
+            case KEY_UP: m_cursor.moveUp(m_editor); 
                 break;
             default: 
                 break;
@@ -75,6 +75,7 @@ public:
             m_editor.addLetter(m_cursor.getCursor(), m_input.getInput());
 
             m_cursor.setCursorX(true, 1);
+            m_cursor.updateCache();
         }
     }
 
@@ -96,6 +97,7 @@ public:
         m_editor.popLetter(m_cursor.getCursor());
 
         m_cursor.setCursorX(true, -1);
+        m_cursor.updateCache();
     }
 
     void handleDeleteLine()
@@ -107,6 +109,7 @@ public:
 
         m_cursor.setCursorY(true, -1);
         m_cursor.setCursorX(false, lineLength);
+        m_cursor.updateCache();
     }
 
     void handleNewline()
