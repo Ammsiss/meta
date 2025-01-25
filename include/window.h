@@ -1,6 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <cstddef>
 #include <ncurses.h>
 
 #include <string>
@@ -36,23 +37,35 @@ public:
     ~Window() { delwin(m_win); }
 
     // getters/setters
+
     WINDOW* getWin() const { return m_win; }
 
     Point2d getDimensions() const { return m_dimensions; }
     void setDimensions(Point2d dimensions) { m_dimensions = dimensions; }
+    std::size_t getOffset() const { return m_viewportOffset; }
 
     // methods
+
+    void incrementOffset(int curY) 
+    { 
+        if (curY == ResizeHandle::getTermSize().y - 1)
+            ++m_viewportOffset; 
+    }
 
     void clearWindow()
     {
         wclear(m_win);
     }
-    
+
+
     void renderContent(const std::deque<std::string>& data)
     {
         wmove(m_win, 0, 0);
 
-        for (std::size_t index{ 0 }; index < data.size(); ++index)
+        std::size_t termLines{ static_cast<std::size_t>(ResizeHandle::getTermSize().x) };
+
+        std::size_t length{ data.size() };
+        for (std::size_t index{ m_viewportOffset }; index < length && index < termLines; ++index)
         {
             wprintw(m_win, "%s\n", data[index].c_str());
         }
@@ -69,7 +82,7 @@ public:
         }
         else
         {
-            mvwprintw(m_win, curP.y, curP.x, "%c", editor.getData()[static_cast<std::size_t>(curP.y)][static_cast<std::size_t>(curP.x)]);
+            mvwprintw(m_win, curP.y, curP.x, "%c", editor.getData()[static_cast<std::size_t>(curP.y) + m_viewportOffset][static_cast<std::size_t>(curP.x)]);
         }
 
         wattroff(m_win, A_REVERSE);
@@ -78,6 +91,7 @@ public:
 private:
     WINDOW* m_win{};
     Point2d m_dimensions{};
+    std::size_t m_viewportOffset{};
 };
 
 #endif

@@ -7,6 +7,12 @@ struct Point2d
     int x{};
 };
 
+struct CurState
+{
+    Point2d curP{};
+    int cachedX{};
+};
+
 namespace KEY
 {
     inline constexpr int NEWLINE{ 10 };

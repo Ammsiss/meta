@@ -29,6 +29,7 @@ public:
 
             if (m_editor.getInput() != ERR)
             {
+                m_cursor.updateCursorState();
                 handleInput();
                 render();
             }
@@ -52,13 +53,13 @@ public:
                 break; 
             case KEY::BACKSPACE: handleBackspace(); 
                 break;
-            case KEY_LEFT: handleLeft(); 
+            case KEY_LEFT: m_cursor.handleLeft(); 
                 break;
-            case KEY_RIGHT: handleRight(); 
+            case KEY_RIGHT: m_cursor.handleRight(m_editor.getLineLength(m_cursor.getCursor().y)); 
                 break;
-            case KEY_DOWN: handleDown(); 
+            case KEY_DOWN: m_cursor.handleDown(m_editor); 
                 break;
-            case KEY_UP: handleUp(); 
+            case KEY_UP: m_cursor.handleUp(m_editor); 
                 break;
             default: 
                 break;
@@ -80,84 +81,32 @@ public:
 
     void handleCharacter()
     {
-        m_editor.addLetter(m_cursor);
-
-        m_cursor.setCursor(Point2d{ 0, 1 });
-        m_cursor.setCachedX(m_cursor.getCursor().x); 
+        m_editor.addLetter(m_cursor.getCursorState().curP);
+        m_cursor.handleRight(m_editor.getLineLength(m_cursor.getCursor().y));
     }
 
     void handleDeleteCharacter()
     {
-        m_editor.popLetter(m_cursor);
-
-        m_cursor.setCursor(Point2d{ 0, -1 });
-        m_cursor.setCachedX(m_cursor.getCursor().x);  
+        m_editor.popLetter(m_cursor.getCursorState().curP);
+        m_cursor.handleLeft(); 
     }
 
     void handleNewline()
     {
-        m_editor.addLine(m_cursor);
+        m_editor.addLine(m_cursor.getCursorState().curP);
 
-        m_cursor.setCursor(Point2d{ 1, 0 }, 0);
+        // m_window.incrementOffset(m_cursor.getCursorState().curP.y);
+        
+        m_cursor.handleDown(m_editor);
+        m_cursor.setX(0);
         m_cursor.setCachedX(0);
     }
 
     void handleDeleteLine()
     {
-        int curY{ m_cursor.getCursor().y };
+        m_cursor.handleUp(m_editor, m_editor.getLineLength(m_cursor.getCursor().y - 1));
 
-        int previousLineLength{ m_editor.getLineLength(m_cursor.getCursor().y - 1) };
-
-        m_cursor.setCursor(Point2d{ -1, 0 }, previousLineLength);
-        m_cursor.setCachedX(m_cursor.getCursor().x); 
-
-        m_editor.popLine(curY);    
-    }
-
-    void handleUp()
-    {
-        Point2d curP{ m_cursor.getCursor() };
-        int cachedX{ m_cursor.getCahcedX() };
-
-        if (curP.y != 0)
-        {
-            if (cachedX <= m_editor.getLineLength(curP.y - 1))
-                m_cursor.setCursor(Point2d{ -1, 0 }, cachedX);
-            else
-                m_cursor.setCursor(Point2d{ -1, 0 }, m_editor.getLineLength(curP.y - 1));
-        }
-    }
-
-    void handleDown()
-    {
-        Point2d curP{ m_cursor.getCursor() };
-        int cachedX{ m_cursor.getCahcedX() };
-
-        if (curP.y != static_cast<int>(m_editor.getData().size()) - 1)
-        {
-            if (cachedX <= m_editor.getLineLength(curP.y + 1))
-                m_cursor.setCursor(Point2d{ 1, 0 }, cachedX);
-            else
-                m_cursor.setCursor(Point2d{ 1, 0 }, m_editor.getLineLength(curP.y + 1));
-        }
-    }
-
-    void handleLeft()
-    {
-        if (m_cursor.getCursor().x != 0)
-        {
-            m_cursor.setCursor(Point2d{ 0, -1 });
-            m_cursor.setCachedX(m_cursor.getCursor().x);
-        }
-    }
-
-    void handleRight()
-    {
-        if (m_cursor.getCursor().x != m_editor.getLineLength(m_cursor.getCursor().y))
-        {
-            m_cursor.setCursor(Point2d{ 0, 1 });
-            m_cursor.setCachedX(m_cursor.getCursor().x);
-        }
+        m_editor.popLine(m_cursor.getCursorState().curP.y);
     }
 
     void render()
@@ -165,9 +114,13 @@ public:
         m_window.clearWindow(); 
         m_window.renderContent(m_editor.getData());
         m_window.renderCursor(m_cursor, m_editor);
-
-        mvwprintw(m_window.getWin(), 15, 15, "%d", m_cursor.getCahcedX());
-        wrefresh(m_window.getWin()); 
+        
+        mvwprintw(m_window.getWin(), 15, 15, "cx: %d", m_cursor.getCahcedX());
+        mvwprintw(m_window.getWin(), 16, 15, "y:  %d", m_cursor.getCursor().y);
+        mvwprintw(m_window.getWin(), 17, 15, "x:  %d", m_cursor.getCursor().x);
+        mvwprintw(m_window.getWin(), 18, 15, "l1: %d", m_editor.getLineLength(0));
+        mvwprintw(m_window.getWin(), 19, 15, "IO: %d", m_window.getOffset()); 
+        wrefresh(m_window.getWin());
     }
 
     const Window& getWindow() const { return m_window; }
