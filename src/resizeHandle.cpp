@@ -17,6 +17,7 @@ void ResizeHandle::resize(Window& win)
     {
         win.setDimensions(Point2d{ dimensions.y, dimensions.x}); 
         wresize(win.getWin(), win.getDimensions().y, win.getDimensions().x);
+        termSize = dimensions;
     }
 }
 

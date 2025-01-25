@@ -8,6 +8,7 @@
 #include "curses.h"
 #include "editor.h"
 #include "resizeHandle.h"
+#include "input.h"
 
 class Application
 {
@@ -16,7 +17,7 @@ public:
 
     void initialize()
     {
-        m_window.renderCursor(m_cursor, m_editor);
+        m_window.renderCursor(m_cursor.getCursor(), m_editor);
     }
 
     void run()
@@ -25,11 +26,10 @@ public:
         {
             ResizeHandle::resize(m_window);
 
-            m_editor.setInput(wgetch(m_window.getWin()));
+            m_input.setInput(m_window);
 
-            if (m_editor.getInput() != ERR)
+            if (m_input.getInput() != ERR)
             {
-                m_cursor.updateCursorState();
                 handleInput();
                 render();
             }
@@ -40,7 +40,7 @@ public:
 
     void handleInput()
     {
-        const int input{ m_editor.getInput() };
+        const int input{ m_input.getInput() };
         const bool isPrintableChar{ input >= KEY::CHARMIN && input <= KEY::CHARMAX };
 
         if (isPrintableChar)
@@ -49,21 +49,32 @@ public:
         {
             switch (input)
             {
-            case KEY::NEWLINE: handleNewline(); 
-                break; 
             case KEY::BACKSPACE: handleBackspace(); 
+                break; 
+            case KEY::NEWLINE: handleNewline(); 
                 break;
-            case KEY_LEFT: m_cursor.handleLeft(); 
+            case KEY_LEFT: // m_cursor.handleLeft(); 
                 break;
-            case KEY_RIGHT: m_cursor.handleRight(m_editor.getLineLength(m_cursor.getCursor().y)); 
+            case KEY_RIGHT: // m_cursor.handleRight(); 
                 break;
-            case KEY_DOWN: m_cursor.handleDown(m_editor); 
+            case KEY_DOWN: // m_cursor.handleDown(); 
                 break;
-            case KEY_UP: m_cursor.handleUp(m_editor); 
+            case KEY_UP: // m_cursor.handleUp(); 
                 break;
             default: 
                 break;
             }
+        }
+    }
+
+    void handleCharacter()
+    {
+        if (m_cursor.getCursor().x != ResizeHandle::getTermSize().x - 1)
+        {
+            // editor relies on cursor state
+            m_editor.addLetter(m_cursor.getCursor(), m_input.getInput());
+
+            m_cursor.setCursorX(true, 1);
         }
     }
 
@@ -79,48 +90,40 @@ public:
         }
     }
 
-    void handleCharacter()
-    {
-        m_editor.addLetter(m_cursor.getCursorState().curP);
-        m_cursor.handleRight(m_editor.getLineLength(m_cursor.getCursor().y));
-    }
-
     void handleDeleteCharacter()
     {
-        m_editor.popLetter(m_cursor.getCursorState().curP);
-        m_cursor.handleLeft(); 
-    }
+        // editor relies on cursor state
+        m_editor.popLetter(m_cursor.getCursor());
 
-    void handleNewline()
-    {
-        m_editor.addLine(m_cursor.getCursorState().curP);
-
-        // m_window.incrementOffset(m_cursor.getCursorState().curP.y);
-        
-        m_cursor.handleDown(m_editor);
-        m_cursor.setX(0);
-        m_cursor.setCachedX(0);
+        m_cursor.setCursorX(true, -1);
     }
 
     void handleDeleteLine()
     {
-        m_cursor.handleUp(m_editor, m_editor.getLineLength(m_cursor.getCursor().y - 1));
+        const int lineLength{ m_editor.getLineLength(m_cursor.getCursor().y - 1) };
 
-        m_editor.popLine(m_cursor.getCursorState().curP.y);
+        // editor relies on cursor state
+        m_editor.popLine(m_cursor.getCursor().y);
+
+        m_cursor.setCursorY(true, -1);
+        m_cursor.setCursorX(false, lineLength);
+    }
+
+    void handleNewline()
+    {
+        // editor relies on cursor state
+        m_editor.addLine(m_cursor.getCursor());
+
+        m_cursor.setCursorY(true, 1);
+        m_cursor.setCursorX(false, 0);
+        m_cursor.updateCache();
     }
 
     void render()
     {
         m_window.clearWindow(); 
         m_window.renderContent(m_editor.getData());
-        m_window.renderCursor(m_cursor, m_editor);
-        
-        mvwprintw(m_window.getWin(), 15, 15, "cx: %d", m_cursor.getCahcedX());
-        mvwprintw(m_window.getWin(), 16, 15, "y:  %d", m_cursor.getCursor().y);
-        mvwprintw(m_window.getWin(), 17, 15, "x:  %d", m_cursor.getCursor().x);
-        mvwprintw(m_window.getWin(), 18, 15, "l1: %d", m_editor.getLineLength(0));
-        mvwprintw(m_window.getWin(), 19, 15, "IO: %d", m_window.getOffset()); 
-        wrefresh(m_window.getWin());
+        m_window.renderCursor(m_cursor.getCursor(), m_editor);
     }
 
     const Window& getWindow() const { return m_window; }
@@ -129,4 +132,5 @@ private:
     Window m_window{};
     Editor m_editor{};
     Cursor m_cursor{};
+    Input m_input{};
 };

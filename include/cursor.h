@@ -19,9 +19,25 @@ public:
     Cursor(Point2d curP)
     : m_curP { curP } {}
 
-    void updateCache()
+    Point2d getCursor() const { return m_curP; }
+
+    // sets cached x to cursor x
+    void updateCache() { m_cachedX = m_curP.x; }
+
+    void setCursorY(const bool relative, const int curY)
     {
-        m_cachedX = m_curP.x;
+        if (relative)
+            m_curP.y += curY;
+        else
+            m_curP.y = curY;
+    }
+    
+    void setCursorX(const bool relative, const int curX)
+    {
+        if (relative)
+            m_curP.x += curX;
+        else
+            m_curP.x = curX;
     }
 
     void handleUp(const Editor& editor, std::optional<const int> lineLength = std::nullopt)
@@ -86,46 +102,9 @@ public:
         }
     }
 
-    void setX(int delta)
-    {
-        m_curP.x = delta;
-    }
-
-    void setY(int delta)
-    {
-        m_curP.y = delta;
-    }
-
-    Point2d getCursor() const
-    {
-        return m_curP;
-    }
-
-    void setCachedX(int cachedX)
-    {
-        m_cachedX = cachedX;
-    }
-
-    int getCahcedX() const
-    {
-        return m_cachedX;
-    }
-
-    void updateCursorState()
-    {
-        m_curState.curP = m_curP;
-        m_curState.cachedX = m_cachedX;
-    }
-
-    CurState getCursorState() const
-    {
-        return m_curState;
-    }
-   
 private:
     Point2d m_curP{};
     int m_cachedX{};
-    CurState m_curState{};
 };
 
 #endif

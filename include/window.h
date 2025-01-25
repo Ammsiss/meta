@@ -42,15 +42,8 @@ public:
 
     Point2d getDimensions() const { return m_dimensions; }
     void setDimensions(Point2d dimensions) { m_dimensions = dimensions; }
-    std::size_t getOffset() const { return m_viewportOffset; }
 
     // methods
-
-    void incrementOffset(int curY) 
-    { 
-        if (curY == ResizeHandle::getTermSize().y - 1)
-            ++m_viewportOffset; 
-    }
 
     void clearWindow()
     {
@@ -61,28 +54,24 @@ public:
     void renderContent(const std::deque<std::string>& data)
     {
         wmove(m_win, 0, 0);
-
-        std::size_t termLines{ static_cast<std::size_t>(ResizeHandle::getTermSize().x) };
-
-        std::size_t length{ data.size() };
-        for (std::size_t index{ m_viewportOffset }; index < length && index < termLines; ++index)
+ 
+        for (const auto& line : data)
         {
-            wprintw(m_win, "%s\n", data[index].c_str());
+            wprintw(m_win, "%s\n", line.c_str());
         }
     }
 
-    void renderCursor(const Cursor& cursor, const Editor& editor)
+    void renderCursor(const Point2d curP, const Editor& editor)
     {
         wattron(m_win, A_REVERSE);
 
-        Point2d curP{ cursor.getCursor() };
         if (curP.x == editor.getLineLength(curP.y))
         {
             mvwprintw(m_win, curP.y, curP.x, " ");
         }
         else
         {
-            mvwprintw(m_win, curP.y, curP.x, "%c", editor.getData()[static_cast<std::size_t>(curP.y) + m_viewportOffset][static_cast<std::size_t>(curP.x)]);
+            mvwprintw(m_win, curP.y, curP.x, "%c", editor.getData()[static_cast<std::size_t>(curP.y)][static_cast<std::size_t>(curP.x)]);
         }
 
         wattroff(m_win, A_REVERSE);
@@ -91,7 +80,6 @@ public:
 private:
     WINDOW* m_win{};
     Point2d m_dimensions{};
-    std::size_t m_viewportOffset{};
 };
 
 #endif

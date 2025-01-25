@@ -1,16 +1,12 @@
 #ifndef AGGREGATES_H
 #define AGGREGATES_H
 
+#include <optional>
+
 struct Point2d
 {
     int y{};
     int x{};
-};
-
-struct CurState
-{
-    Point2d curP{};
-    int cachedX{};
 };
 
 namespace KEY

@@ -17,21 +17,21 @@ public:
     Editor() = default;
 
     // getters/setters
-    int getInput() const { return m_input; }
-    void setInput(int input) { m_input = input; }
 
     const std::deque<std::string>& getData() const { return m_data; }
 
     // methods
 
-    void addLetter(const Point2d curP);
+    void addLetter(const Point2d curP, const int input);
     void popLetter(const Point2d curP);
+    // Adds line below cursor, potentially splits line
     void addLine(const Point2d curP);
+    void splitLine(const Point2d curP);
+    // Pops current line, potentially merges current line to previous line
     void popLine(int curY);
     int getLineLength(int line) const;
 
 private:
-    int m_input{};
     std::deque<std::string> m_data{ "" };
 };
 
