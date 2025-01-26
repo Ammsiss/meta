@@ -1,8 +1,6 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include <ncurses.h>
-
 #include "aggregates.h"
 #include "editor.h"
 

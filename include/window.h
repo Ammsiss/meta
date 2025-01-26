@@ -1,25 +1,22 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <cstddef>
 #include <ncurses.h>
 
 #include <string>
-#include <deque>
 
 #include "aggregates.h"
 #include "cursor.h"
-#include "editor.h"
 #include "resizeHandle.h"
+
 
 class Window
 {
 public:
-    // constructors/destructors
+
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
-    // remove ncurses functions
     Window()
     {
         Point2d dimensions{};
@@ -36,44 +33,38 @@ public:
 
     ~Window() { delwin(m_win); }
 
-    // getters/setters
-
     WINDOW* getWin() const { return m_win; }
 
     Point2d getDimensions() const { return m_dimensions; }
     void setDimensions(Point2d dimensions) { m_dimensions = dimensions; }
 
-    // methods
-
-    void clearWindow()
+    void clearWindow() const
     {
         wclear(m_win);
     }
 
-
-    void renderContent(const std::deque<std::string>& data)
+    void moveCursor(int y, int x) const
     {
-        wmove(m_win, 0, 0);
- 
-        for (const auto& line : data)
-        {
-            wprintw(m_win, "%s\n", line.c_str());
-        }
+        wmove(m_win, y, x);
     }
 
-    void renderCursor(const Point2d curP, const Editor& editor)
+    void movePrint(int y, int x, const std::string& str) const
+    {
+        mvwprintw(m_win, y, x, str.c_str());
+    }
+
+    void print(const std::string& str) const
+    {
+        wprintw(m_win, str.c_str());
+    }
+
+    void reverseOn() const
     {
         wattron(m_win, A_REVERSE);
+    }
 
-        if (curP.x == editor.getLineLength(curP.y))
-        {
-            mvwprintw(m_win, curP.y, curP.x, " ");
-        }
-        else
-        {
-            mvwprintw(m_win, curP.y, curP.x, "%c", editor.getData()[static_cast<std::size_t>(curP.y)][static_cast<std::size_t>(curP.x)]);
-        }
-
+    void reverseOff() const
+    {
         wattroff(m_win, A_REVERSE);
     }
 

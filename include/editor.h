@@ -1,8 +1,6 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include <ncurses.h>
-
 #include <deque>
 #include <string>
 

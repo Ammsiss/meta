@@ -1,5 +1,3 @@
-#include <ncurses.h>
-
 #include <chrono>
 #include <thread>
 
@@ -9,6 +7,7 @@
 #include "editor.h"
 #include "resizeHandle.h"
 #include "input.h"
+#include "renderingUtils.h"
 
 class Application
 {
@@ -17,7 +16,7 @@ public:
 
     void initialize()
     {
-        m_window.renderCursor(m_cursor.getCursor(), m_editor);
+        rendering::renderCursor(m_cursor.getCursor(), m_editor, m_window);
     }
 
     void run()
@@ -50,7 +49,7 @@ public:
             switch (input)
             {
             case KEY::BACKSPACE: handleBackspace(); 
-                break; 
+                break;
             case KEY::NEWLINE: handleNewline(); 
                 break;
             case KEY_LEFT: m_cursor.moveLeft(); 
@@ -125,8 +124,8 @@ public:
     void render()
     {
         m_window.clearWindow(); 
-        m_window.renderContent(m_editor.getData());
-        m_window.renderCursor(m_cursor.getCursor(), m_editor);
+        rendering::renderContent(m_editor.getData(), m_window);
+        rendering::renderCursor(m_cursor.getCursor(), m_editor, m_window);
     }
 
     const Window& getWindow() const { return m_window; }
