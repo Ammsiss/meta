@@ -71,6 +71,11 @@ public:
         wattroff(m_win, A_REVERSE);
     }
 
+    void refreshWin() const
+    {
+        wrefresh(m_win);
+    }
+
 private:
     WINDOW* m_win{};
     Point2d m_dimensions{};

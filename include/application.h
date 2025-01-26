@@ -68,7 +68,10 @@ public:
 
     void handleCharacter()
     {
-        if (m_cursor.getCursor().x != ResizeHandle::getTermSize().x - 1)
+        bool cursorNotAtEnd{ m_cursor.getCursor().x != ResizeHandle::getTermSize().x - 1 };
+        bool lineNotFull{ m_editor.getLineLength(m_cursor.getCursor().y) != ResizeHandle::getTermSize().x - 1 };
+
+        if (cursorNotAtEnd && lineNotFull)
         {
             // editor relies on cursor state
             m_editor.addLetter(m_cursor.getCursor(), m_input.getInput());
@@ -102,7 +105,7 @@ public:
     void handleDeleteLine()
     {
         const int lineLength{ m_editor.getLineLength(m_cursor.getCursor().y - 1) };
-
+        
         // editor relies on cursor state
         m_editor.popLine(m_cursor.getCursor().y);
 
@@ -112,11 +115,14 @@ public:
     }
 
     void handleNewline()
-    {
+    { 
         // editor relies on cursor state
         m_editor.addLine(m_cursor.getCursor());
 
-        m_cursor.setCursorY(true, 1);
+        if (!rendering::incrementOffset(m_cursor))
+        {
+            m_cursor.setCursorY(true, 1);
+        }
         m_cursor.setCursorX(false, 0);
         m_cursor.updateCache();
     }
@@ -126,6 +132,8 @@ public:
         m_window.clearWindow(); 
         rendering::renderContent(m_editor.getData(), m_window);
         rendering::renderCursor(m_cursor.getCursor(), m_editor, m_window);
+        mvwprintw(m_window.getWin(), 15, 15, "%d", rendering::incrementOffset(m_cursor));
+        m_window.refreshWin();
     }
 
     const Window& getWindow() const { return m_window; }
