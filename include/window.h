@@ -35,8 +35,11 @@ public:
 
     WINDOW* getWin() const { return m_win; }
 
-    Point2d getDimensions() const { return m_dimensions; }
-    void setDimensions(Point2d dimensions) { m_dimensions = dimensions; }
+    void resizeWin(const Point2d dimensions)
+    {
+        m_dimensions = dimensions;
+        wresize(m_win, m_dimensions.y, m_dimensions.x);
+    }
 
     void clearWindow() const
     {

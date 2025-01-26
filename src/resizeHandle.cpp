@@ -1,7 +1,5 @@
 #include "resizeHandle.h"
 
-#include <ncurses.h>
-
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -15,8 +13,7 @@ void ResizeHandle::resize(Window& win)
 
     if (termSize.y != dimensions.y || termSize.x != dimensions.x)
     {
-        win.setDimensions(Point2d{ dimensions.y, dimensions.x}); 
-        wresize(win.getWin(), win.getDimensions().y, win.getDimensions().x);
+        win.resizeWin(dimensions);        
         termSize = dimensions;
     }
 }

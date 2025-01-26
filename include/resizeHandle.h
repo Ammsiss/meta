@@ -1,8 +1,6 @@
 #ifndef RESIZE_HANDLE
 #define RESIZE_HANDLE
 
-#include <ncurses.h>
-
 #include <sys/ioctl.h>
 #include <unistd.h>
 
