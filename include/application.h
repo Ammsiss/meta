@@ -132,7 +132,12 @@ public:
         m_window.clearWindow(); 
         rendering::renderContent(m_editor.getData(), m_window);
         rendering::renderCursor(m_cursor.getCursor(), m_editor, m_window);
-        mvwprintw(m_window.getWin(), 15, 15, "%d", rendering::incrementOffset(m_cursor));
+        mvwprintw(m_window.getWin(), 15, 15, "%d", rendering::scrollOffset);
+        mvwprintw(m_window.getWin(), 16, 15, "y:  %d", m_cursor.getCursor().y);
+        mvwprintw(m_window.getWin(), 17, 15, "x:  %d", m_cursor.getCursor().x);
+        mvwprintw(m_window.getWin(), 18, 15, "ty: %d", ResizeHandle::getTermSize().y);
+        mvwprintw(m_window.getWin(), 17, 15, "tx: %d", ResizeHandle::getTermSize().x);
+
         m_window.refreshWin();
     }
 

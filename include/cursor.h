@@ -4,6 +4,7 @@
 #include "aggregates.h"
 #include "editor.h"
 
+
 class Window;
 
 class Cursor
@@ -41,6 +42,10 @@ public:
                 m_curP.x = m_cachedX;
             else
                 m_curP.x = editor.getLineLength(m_curP.y);
+        }
+        else
+        {
+            //rendering::decrementOffset();
         }
     }
 

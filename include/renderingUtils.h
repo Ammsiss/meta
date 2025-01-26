@@ -12,7 +12,7 @@ namespace rendering
     // returns true if incremented scroll offset
     inline bool incrementOffset(const Cursor& cursor)
     {
-        if (cursor.getCursor().y == ResizeHandle::getTermSize().y)
+        if (cursor.getCursor().y == ResizeHandle::getTermSize().y - 1)
         {
             ++scrollOffset;
             return true;
@@ -21,8 +21,14 @@ namespace rendering
         return false;
     }
 
+    inline void decrementOffset()
+    {
+
+    }
+
     inline void renderContent(const std::deque<std::string>& data, const Window& window)
     { 
+        /*
         window.moveCursor(0, 0);
 
         for (const auto& line : data)
@@ -30,10 +36,15 @@ namespace rendering
             window.print(line);
             window.print("\n");
         }
+        */
 
-        //std::size_t offset{ static_cast<std::size_t>(rendering::scrollOffset) };
+        std::size_t offset{ static_cast<std::size_t>(rendering::scrollOffset) };
 
-        //for (std::size_t i{ offset }; i < )
+        for (std::size_t i{ offset }; i < data.size() && static_cast<int>(i) < ResizeHandle::getTermSize().y; ++i)
+        {
+            window.print(data[i]);
+            window.print("\n");
+        }
     }
 
     inline void renderCursor(const Point2d curP, const Editor& editor, const Window& window)
