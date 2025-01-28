@@ -2,10 +2,8 @@
 #define CURSOR_H
 
 #include "aggregates.h"
-#include "editor.h"
 
-
-class Window;
+class Editor;
 
 class Cursor
 {
@@ -30,57 +28,10 @@ public:
             m_curP.x = curX;
     }
 
-    // Future: Consider extracting common logic for updating m_curP.x
-    // if movement beyond arrow keys (e.g., shortcuts) is added.
-    void moveUp(const Editor& editor)
-    {
-        if (m_curP.y != 0)
-        {
-            --m_curP.y;
-
-            if (m_cachedX <= editor.getLineLength(m_curP.y))
-                m_curP.x = m_cachedX;
-            else
-                m_curP.x = editor.getLineLength(m_curP.y);
-        }
-        else
-        {
-            //rendering::decrementOffset();
-        }
-    }
-
-    void moveDown(const Editor& editor)
-    {
-        int dataStructureSize{ static_cast<int>(editor.getData().size()) };
-
-        if (m_curP.y != dataStructureSize - 1)
-        {
-            ++m_curP.y;
-
-            if (m_cachedX <= editor.getLineLength(m_curP.y))
-                m_curP.x = m_cachedX;
-            else
-                m_curP.x = editor.getLineLength(m_curP.y);
-        }
-    } 
-
-    void moveLeft()
-    {
-        if (m_curP.x != 0)
-        {
-            --m_curP.x;
-            m_cachedX = m_curP.x;
-        }
-    }
-
-    void moveRight(const Editor& editor)
-    {
-        if (m_curP.x != editor.getLineLength(m_curP.y))
-        {
-            ++m_curP.x;
-            m_cachedX = m_curP.x;
-        }
-    }
+    void moveUp(const Editor& editor);
+    void moveDown(const Editor& editor);
+    void moveLeft(); 
+    void moveRight(const Editor& editor);
 
 private:
     Point2d m_curP{};

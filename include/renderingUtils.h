@@ -23,7 +23,7 @@ namespace rendering
 
     inline void decrementOffset()
     {
-
+        --scrollOffset;
     }
 
     inline void renderContent(const std::deque<std::string>& data, const Window& window)
@@ -40,10 +40,12 @@ namespace rendering
 
         std::size_t offset{ static_cast<std::size_t>(rendering::scrollOffset) };
 
-        for (std::size_t i{ offset }; i < data.size() && static_cast<int>(i) < ResizeHandle::getTermSize().y; ++i)
+        for (std::size_t i{ offset }; i < data.size() && static_cast<int>(i) - scrollOffset < ResizeHandle::getTermSize().y; ++i)
         {
             window.print(data[i]);
-            window.print("\n");
+
+            if (static_cast<int>(i) - scrollOffset != ResizeHandle::getTermSize().y - 1)
+                window.print("\n");
         }
     }
 
@@ -51,13 +53,13 @@ namespace rendering
     {
         window.reverseOn();
 
-        if (curP.x == editor.getLineLength(curP.y))
+        if (curP.x == editor.getLineLength(curP.y + scrollOffset))
         {
             window.movePrint(curP.y, curP.x, " ");
         }
         else
         {
-            std::size_t curY{ static_cast<std::size_t>(curP.y) };
+            std::size_t curY{ static_cast<std::size_t>(curP.y + scrollOffset) };
             std::size_t curX{ static_cast<std::size_t>(curP.x) };
             std::string charToPrint{ editor.getData()[curY][curX] };
 

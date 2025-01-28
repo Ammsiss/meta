@@ -2,6 +2,9 @@ Add universal snapshot object
 
 Todo:
 - fix text going off screen when arrow key left
+- extract out bottom of viewport to variable
+- Add scrollOffset to cursor class
+- refactor application to more free functions
 
 - Add fix for line wrapping, then deleting cauing popping of line segfault error
 - Potentailly refactor application class with Render and Input classes

@@ -66,15 +66,16 @@ public:
         }
     }
 
+    // SHOULD BE FINE
     void handleCharacter()
     {
         bool cursorNotAtEnd{ m_cursor.getCursor().x != ResizeHandle::getTermSize().x - 1 };
-        bool lineNotFull{ m_editor.getLineLength(m_cursor.getCursor().y) != ResizeHandle::getTermSize().x - 1 };
+        bool lineNotFull{ m_editor.getLineLength(m_cursor.getCursor().y + rendering::scrollOffset) != ResizeHandle::getTermSize().x - 1 };
 
         if (cursorNotAtEnd && lineNotFull)
         {
             // editor relies on cursor state
-            m_editor.addLetter(m_cursor.getCursor(), m_input.getInput());
+            m_editor.addLetter(Point2d{ m_cursor.getCursor().y + rendering::scrollOffset, m_cursor.getCursor().x }, m_input.getInput());
 
             m_cursor.setCursorX(true, 1);
             m_cursor.updateCache();
@@ -87,37 +88,52 @@ public:
         {
             handleDeleteCharacter();
         }
-        else if (m_cursor.getCursor().y > 0)
+        else if (rendering::scrollOffset != 0 || m_cursor.getCursor().y != 0)
         {
             handleDeleteLine();
         }
     }
 
+    // SHOULD BE FINE
     void handleDeleteCharacter()
     {
         // editor relies on cursor state
-        m_editor.popLetter(m_cursor.getCursor());
+        m_editor.popLetter(Point2d{ m_cursor.getCursor().y + rendering::scrollOffset, m_cursor.getCursor().x });
 
         m_cursor.setCursorX(true, -1);
         m_cursor.updateCache();
     }
 
+    // SHOULD BE FINE
     void handleDeleteLine()
     {
-        const int lineLength{ m_editor.getLineLength(m_cursor.getCursor().y - 1) };
+        const int lineLength{ m_editor.getLineLength(m_cursor.getCursor().y + rendering::scrollOffset - 1) };
         
-        // editor relies on cursor state
-        m_editor.popLine(m_cursor.getCursor().y);
+        if (m_cursor.getCursor().y != 0)
+        {
+            // editor relies on cursor state
+            m_editor.popLine(m_cursor.getCursor().y + rendering::scrollOffset); 
 
-        m_cursor.setCursorY(true, -1);
-        m_cursor.setCursorX(false, lineLength);
-        m_cursor.updateCache();
+            m_cursor.setCursorY(true, -1);
+            m_cursor.setCursorX(false, lineLength);
+            m_cursor.updateCache();
+        }
+        else
+        {
+            m_editor.popLine(m_cursor.getCursor().y + rendering::scrollOffset);
+
+            rendering::decrementOffset();
+
+            m_cursor.setCursorX(false, lineLength);
+            m_cursor.updateCache();
+        }
     }
 
+    // SHOULD BE FINE
     void handleNewline()
     { 
         // editor relies on cursor state
-        m_editor.addLine(m_cursor.getCursor());
+        m_editor.addLine(Point2d{ m_cursor.getCursor().y + rendering::scrollOffset, m_cursor.getCursor().x });
 
         if (!rendering::incrementOffset(m_cursor))
         {
@@ -127,16 +143,20 @@ public:
         m_cursor.updateCache();
     }
 
+    // SHOULD BE FINE
     void render()
     {
         m_window.clearWindow(); 
         rendering::renderContent(m_editor.getData(), m_window);
         rendering::renderCursor(m_cursor.getCursor(), m_editor, m_window);
+
+
         mvwprintw(m_window.getWin(), 15, 15, "%d", rendering::scrollOffset);
         mvwprintw(m_window.getWin(), 16, 15, "y:  %d", m_cursor.getCursor().y);
         mvwprintw(m_window.getWin(), 17, 15, "x:  %d", m_cursor.getCursor().x);
         mvwprintw(m_window.getWin(), 18, 15, "ty: %d", ResizeHandle::getTermSize().y);
         mvwprintw(m_window.getWin(), 17, 15, "tx: %d", ResizeHandle::getTermSize().x);
+
 
         m_window.refreshWin();
     }
