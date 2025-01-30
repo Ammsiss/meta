@@ -16,7 +16,7 @@ public:
 
     void initialize()
     {
-        rendering::renderCursor(m_cursor.getCursor(), m_editor, m_window);
+        rendering::renderCursor(m_cursor, m_editor, m_window);
     }
 
     void run()
@@ -66,16 +66,16 @@ public:
         }
     }
 
-    // SHOULD BE FINE
     void handleCharacter()
     {
         bool cursorNotAtEnd{ m_cursor.getCursor().x != ResizeHandle::getTermSize().x - 1 };
-        bool lineNotFull{ m_editor.getLineLength(m_cursor.getCursor().y + rendering::scrollOffset) != ResizeHandle::getTermSize().x - 1 };
+        // POTENTIALLY CAN CHANGE
+        bool lineNotFull{ m_editor.getLineLength(m_cursor.getLogicalY()) != ResizeHandle::getTermSize().x - 1 };
 
         if (cursorNotAtEnd && lineNotFull)
         {
             // editor relies on cursor state
-            m_editor.addLetter(Point2d{ m_cursor.getCursor().y + rendering::scrollOffset, m_cursor.getCursor().x }, m_input.getInput());
+            m_editor.addLetter(Point2d{ m_cursor.getLogicalY(), m_cursor.getCursor().x }, m_input.getInput());
 
             m_cursor.setCursorX(true, 1);
             m_cursor.updateCache();
@@ -88,31 +88,29 @@ public:
         {
             handleDeleteCharacter();
         }
-        else if (rendering::scrollOffset != 0 || m_cursor.getCursor().y != 0)
+        else if (m_cursor.getScrollOffset() != 0 || m_cursor.getCursor().y != 0)
         {
             handleDeleteLine();
         }
     }
 
-    // SHOULD BE FINE
     void handleDeleteCharacter()
     {
         // editor relies on cursor state
-        m_editor.popLetter(Point2d{ m_cursor.getCursor().y + rendering::scrollOffset, m_cursor.getCursor().x });
+        m_editor.popLetter(Point2d{ m_cursor.getLogicalY(), m_cursor.getCursor().x });
 
         m_cursor.setCursorX(true, -1);
         m_cursor.updateCache();
     }
 
-    // SHOULD BE FINE
     void handleDeleteLine()
     {
-        const int lineLength{ m_editor.getLineLength(m_cursor.getCursor().y + rendering::scrollOffset - 1) };
+        const int lineLength{ m_editor.getLineLength(m_cursor.getLogicalY() - 1) };
         
         if (m_cursor.getCursor().y != 0)
         {
             // editor relies on cursor state
-            m_editor.popLine(m_cursor.getCursor().y + rendering::scrollOffset); 
+            m_editor.popLine(m_cursor.getLogicalY()); 
 
             m_cursor.setCursorY(true, -1);
             m_cursor.setCursorX(false, lineLength);
@@ -120,38 +118,36 @@ public:
         }
         else
         {
-            m_editor.popLine(m_cursor.getCursor().y + rendering::scrollOffset);
+            m_editor.popLine(m_cursor.getLogicalY());
 
-            rendering::decrementOffset();
-
+            m_cursor.decrementOffset();
             m_cursor.setCursorX(false, lineLength);
             m_cursor.updateCache();
         }
     }
 
-    // SHOULD BE FINE
     void handleNewline()
     { 
         // editor relies on cursor state
-        m_editor.addLine(Point2d{ m_cursor.getCursor().y + rendering::scrollOffset, m_cursor.getCursor().x });
+        m_editor.addLine(Point2d{ m_cursor.getLogicalY(), m_cursor.getCursor().x });
 
-        if (!rendering::incrementOffset(m_cursor))
-        {
+        if (m_cursor.getCursor().y == ResizeHandle::getTermSize().y - 1)
+            m_cursor.incrementOffset();
+        else
             m_cursor.setCursorY(true, 1);
-        }
+
         m_cursor.setCursorX(false, 0);
         m_cursor.updateCache();
     }
 
-    // SHOULD BE FINE
     void render()
     {
         m_window.clearWindow(); 
-        rendering::renderContent(m_editor.getData(), m_window);
-        rendering::renderCursor(m_cursor.getCursor(), m_editor, m_window);
+        rendering::renderContent(m_editor.getData(), m_window, m_cursor.getScrollOffset());
+        rendering::renderCursor(m_cursor, m_editor, m_window);
 
 
-        mvwprintw(m_window.getWin(), 15, 15, "%d", rendering::scrollOffset);
+        mvwprintw(m_window.getWin(), 15, 15, "%d", m_cursor.getLogicalY());
         mvwprintw(m_window.getWin(), 16, 15, "y:  %d", m_cursor.getCursor().y);
         mvwprintw(m_window.getWin(), 17, 15, "x:  %d", m_cursor.getCursor().x);
         mvwprintw(m_window.getWin(), 18, 15, "ty: %d", ResizeHandle::getTermSize().y);
