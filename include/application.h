@@ -8,15 +8,23 @@
 #include "resizeHandle.h"
 #include "input.h"
 #include "renderingUtils.h"
+#include "fileUtils.h"
 
 class Application
 {
 public:
     Application() = default;
 
-    void initialize()
+    void initialize(const int length, char* clArgs[])
     {
         rendering::renderCursor(m_cursor, m_editor, m_window);
+        
+        if (length > 1)
+        {
+            std::string_view fileName{ clArgs[1] };
+            m_editor.setData(FileUtils::loadFile(fileName));
+            render();
+        }
     }
 
     void run()
@@ -146,13 +154,13 @@ public:
         rendering::renderContent(m_editor.getData(), m_window, m_cursor.getScrollOffset());
         rendering::renderCursor(m_cursor, m_editor, m_window);
 
-
+        /*
         mvwprintw(m_window.getWin(), 15, 15, "%d", m_cursor.getLogicalY());
         mvwprintw(m_window.getWin(), 16, 15, "y:  %d", m_cursor.getCursor().y);
         mvwprintw(m_window.getWin(), 17, 15, "x:  %d", m_cursor.getCursor().x);
         mvwprintw(m_window.getWin(), 18, 15, "ty: %d", ResizeHandle::getTermSize().y);
         mvwprintw(m_window.getWin(), 17, 15, "tx: %d", ResizeHandle::getTermSize().x);
-
+        */
 
         m_window.refreshWin();
     }

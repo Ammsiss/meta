@@ -2,7 +2,6 @@
 
 #include "resizeHandle.h"
 #include "window.h"
-#include "cursor.h"
 #include "application.h"
 
 static void initCurses()
@@ -18,12 +17,12 @@ static void initCurses()
     ResizeHandle::initialize();
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     initCurses();
 
     Application app{};
-    app.initialize();
+    app.initialize(argc, argv);
  
     keypad(app.getWindow().getWin(), true);
     nodelay(app.getWindow().getWin(), true);

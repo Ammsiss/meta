@@ -16,6 +16,7 @@ public:
 
     // getters/setters
 
+    void setData(std::deque<std::string> data) { m_data = data; }
     const std::deque<std::string>& getData() const { return m_data; }
 
     // methods
