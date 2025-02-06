@@ -22,4 +22,15 @@ namespace FileUtils
 
         return fileContents;
     }
+
+    inline void saveFile(std::string_view fileName, const std::deque<std::string>& data)
+    {
+        std::ofstream writer{ fileName };
+
+        if (!writer)
+            return;
+
+        for (const auto& line : data)
+            writer << line << '\n';
+    }
 }

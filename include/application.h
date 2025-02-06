@@ -18,11 +18,11 @@ public:
     void initialize(const int length, char* clArgs[])
     {
         rendering::renderCursor(m_cursor, m_editor, m_window);
-        
+
         if (length > 1)
         {
-            std::string_view fileName{ clArgs[1] };
-            m_editor.setData(FileUtils::loadFile(fileName));
+            m_fileName = clArgs[1];
+            m_editor.setData(FileUtils::loadFile(m_fileName));
             render();
         }
     }
@@ -168,6 +168,8 @@ public:
     const Window& getWindow() const { return m_window; }
 
 private:
+    std::string m_fileName{};
+
     Window m_window{};
     Editor m_editor{};
     Cursor m_cursor{};
