@@ -4,6 +4,7 @@
 #include "editor.h"
 #include "window.h"
 #include "resizeHandle.h"
+#include "cursor.h"
 
 namespace rendering
 {

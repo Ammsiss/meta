@@ -6,7 +6,6 @@
 #include <string>
 
 #include "aggregates.h"
-#include "cursor.h"
 #include "resizeHandle.h"
 
 
@@ -19,14 +18,12 @@ public:
 
     Window()
     {
-        Point2d dimensions{};
-        getmaxyx(stdscr, dimensions.y, dimensions.x);
-        m_dimensions = dimensions;
-        m_win = newwin(dimensions.y, dimensions.x, 0, 0);
+        m_dimensions = ResizeHandle::getTermSize();
+        m_win = newwin(m_dimensions.y, m_dimensions.x, m_position.y, m_position.x);
     }
 
     Window(Point2d dimensions, Point2d position)
-    : m_dimensions { dimensions }
+    : m_dimensions { dimensions }, m_position { position }
     {
         m_win = newwin(m_dimensions.y, m_dimensions.x, position.y, position.x);
     }
@@ -34,6 +31,8 @@ public:
     ~Window() { delwin(m_win); }
 
     WINDOW* getWin() const { return m_win; }
+    Point2d getPos() const { return m_position; }
+    Point2d getDimensions() const { return m_dimensions; }
 
     void resizeWin(const Point2d dimensions)
     {
@@ -79,6 +78,7 @@ public:
 private:
     WINDOW* m_win{};
     Point2d m_dimensions{};
+    Point2d m_position{};
 };
 
 #endif

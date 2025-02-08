@@ -13,7 +13,7 @@ void ResizeHandle::resize(Window& win)
 
     if (termSize.y != dimensions.y || termSize.x != dimensions.x)
     {
-        win.resizeWin(dimensions);        
+        win.resizeWin(Point2d{ dimensions.y - win.getPos().y, dimensions.x - win.getPos().x });
         termSize = dimensions;
     }
 }

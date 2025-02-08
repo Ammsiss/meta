@@ -15,4 +15,13 @@ namespace KEY
     inline constexpr int CHARMAX{ 126 };
 }
 
+namespace WinType
+{
+    enum Win : unsigned int
+    {
+        MAIN,
+        SIDE
+    };
+}
+
 #endif

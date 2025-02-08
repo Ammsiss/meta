@@ -21,8 +21,7 @@ int main(int argc, char* argv[])
 {
     initCurses();
 
-    Application app{};
-    app.initialize(argc, argv);
+    Application app{ argc, argv };
  
     keypad(app.getWindow().getWin(), true);
     nodelay(app.getWindow().getWin(), true);
