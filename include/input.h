@@ -4,6 +4,7 @@
 #include <ncurses.h>
 
 #include "window.h"
+#include "editor.h"
 
 class Input
 {
@@ -12,6 +13,8 @@ public:
 
     int getInput() const { return m_input; }
     void setInput(const Window& window) { m_input = wgetch(window.getWin()); }
+
+    void handleInput(Editor& editor);
 
 private:
     int m_input{};

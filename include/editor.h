@@ -5,8 +5,9 @@
 #include <string>
 
 #include "aggregates.h"
-#include "input.h"
 
+class Window;
+class Input;
 class Cursor;
 
 class Editor
@@ -39,7 +40,7 @@ public:
     void handleDeleteLine();
     void handleNewline();
 
-    void renderCursor(const Window& win);
+    void renderCursor(const Window& win) const;
 
 private:
     std::deque<std::string> m_data{ "" };

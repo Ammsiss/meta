@@ -1,21 +1,27 @@
-#include <deque>
 #include <string>
 
 #include "window.h"
 #include "resizeHandle.h"
+#include "editor.h"
 
 namespace rendering
 {
-    inline void renderContent(const std::deque<std::string>& data, const Window& window, const int scrollOffset)
+    inline void render(const Editor& editor, const Window& window)
     { 
-        std::size_t offset{ static_cast<std::size_t>(scrollOffset) };
+        window.clearWindow();
 
-        for (std::size_t i{ offset }; i < data.size() && static_cast<int>(i) - scrollOffset < ResizeHandle::getTermSize().y; ++i)
+        std::size_t offset{ static_cast<std::size_t>(editor.getScrollOffset()) };
+
+        for (std::size_t i{ offset }; i < editor.getData().size() && static_cast<int>(i) - editor.getScrollOffset() < ResizeHandle::getTermSize().y; ++i)
         {
-            window.print(data[i]);
+            window.print(editor.getData()[i]);
 
-            if (static_cast<int>(i) - scrollOffset != ResizeHandle::getTermSize().y - 1)
+            if (static_cast<int>(i) - editor.getScrollOffset() != ResizeHandle::getTermSize().y - 1)
                 window.print("\n");
         }
+
+        editor.renderCursor(window);
+        window.refreshWin();
     }
+
 }

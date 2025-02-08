@@ -222,7 +222,7 @@ void Editor::handleNewline()
     m_cachedX = m_curP.x;
 }
 
-void Editor::renderCursor(const Window& window)
+void Editor::renderCursor(const Window& window) const
 {
     window.reverseOn();
 
