@@ -1,3 +1,6 @@
+#ifndef INPUT_H
+#define INPUT_H
+
 #include <ncurses.h>
 
 #include "window.h"
@@ -13,3 +16,5 @@ public:
 private:
     int m_input{};
 };
+
+#endif

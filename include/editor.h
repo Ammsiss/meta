@@ -5,6 +5,7 @@
 #include <string>
 
 #include "aggregates.h"
+#include "input.h"
 
 class Cursor;
 
@@ -15,22 +16,41 @@ public:
     Editor() = default;
 
     // getters/setters
-
+    int getScrollOffset() const { return m_scrollOffset; }
     void setData(std::deque<std::string> data) { m_data = data; }
     const std::deque<std::string>& getData() const { return m_data; }
 
     // methods
-    void addLetter(const Point2d curP, const int input);
-    void popLetter(const Point2d curP);
-    // Adds line below cursor, potentially splits line
-    void addLine(const Point2d curP);
+    void addLetter(const int input);
+    void popLetter();
+    void addLine();
     void splitLine(const Point2d curP);
-    // Pops current line, potentially merges current line to previous line
-    void popLine(int curY);
-    int getLineLength(int line) const;
+    void popLine();
+
+    void moveUp();
+    void moveDown();
+    void moveLeft(); 
+    void moveRight();
+
+    // APPLICATION FUNCTIONS
+    void handleCharacter(Input input);
+    void handleBackspace();
+    void handleDeleteCharacter();
+    void handleDeleteLine();
+    void handleNewline();
+
+    void renderCursor(const Window& win);
 
 private:
     std::deque<std::string> m_data{ "" };
+    Point2d m_curP{};
+    int m_cachedX{};
+    int m_scrollOffset{};
+
+    void setCursorY(const bool relative, const int curY); 
+    void setCursorX(const bool relative, const int curX);
+    int getLogicalY() const { return m_scrollOffset + m_curP.y; }
+    int getLineLength(int line) const;
 };
 
 #endif
