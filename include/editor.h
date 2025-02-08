@@ -20,7 +20,6 @@ public:
     const std::deque<std::string>& getData() const { return m_data; }
 
     // methods
-
     void addLetter(const Point2d curP, const int input);
     void popLetter(const Point2d curP);
     // Adds line below cursor, potentially splits line

@@ -3,6 +3,7 @@
 #include "resizeHandle.h"
 #include "window.h"
 #include "application.h"
+#include "aggregates.h"
 
 static void initCurses()
 {
@@ -23,8 +24,8 @@ int main(int argc, char* argv[])
 
     Application app{ argc, argv };
  
-    keypad(app.getWindow().getWin(), true);
-    nodelay(app.getWindow().getWin(), true);
+    keypad(app.getWindow(WinType::MAIN).getWin(), true);
+    nodelay(app.getWindow(WinType::MAIN).getWin(), true);
 
     app.run();
  

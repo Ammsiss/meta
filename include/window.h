@@ -16,6 +16,28 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
+    Window(Window&& win) noexcept
+    : m_win { win.m_win }, m_dimensions { win.m_dimensions }, m_position { win.m_position }
+    {
+        win = Window{};
+    }
+
+    Window& operator=(Window&& win) noexcept
+    {
+        if (this == &win)
+            return *this;
+
+        delwin(m_win);
+
+        m_win = win.m_win;
+        m_dimensions = win.m_dimensions;
+        m_position = win.m_position;
+
+        win = Window{};
+
+        return *this;
+    }
+
     Window()
     {
         m_dimensions = ResizeHandle::getTermSize();

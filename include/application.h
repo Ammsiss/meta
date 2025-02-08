@@ -16,19 +16,10 @@ class Application
 public:
     Application(const int length, char* clArgs[])
     {
-        rendering::renderCursor(m_cursor, m_editor, m_window);
+        m_window.reserve(10);
+        m_window.emplace_back();
 
-        if (length > 1)
-        {
-            m_fileName = clArgs[1];
-            m_editor.setData(FileUtils::loadFile(m_fileName));
-            render();
-        }
-    }
-
-    void initialize(const int length, char* clArgs[])
-    {
-        rendering::renderCursor(m_cursor, m_editor, m_window);
+        rendering::renderCursor(m_cursor, m_editor, m_window[WinType::MAIN]);
 
         if (length > 1)
         {
@@ -42,9 +33,9 @@ public:
     {
         while (true)
         {
-            ResizeHandle::resize(m_window);
+            ResizeHandle::resize(m_window[WinType::MAIN]);
 
-            m_input.setInput(m_window);
+            m_input.setInput(m_window[WinType::MAIN]);
 
             if (m_input.getInput() != ERR)
             {
@@ -161,27 +152,19 @@ public:
 
     void render()
     {
-        m_window.clearWindow(); 
-        rendering::renderContent(m_editor.getData(), m_window, m_cursor.getScrollOffset());
-        rendering::renderCursor(m_cursor, m_editor, m_window);
+        m_window[WinType::MAIN].clearWindow(); 
+        rendering::renderContent(m_editor.getData(), m_window[WinType::MAIN], m_cursor.getScrollOffset());
+        rendering::renderCursor(m_cursor, m_editor, m_window[WinType::MAIN]);
 
-        /*
-        mvwprintw(m_window.getWin(), 15, 15, "%d", m_cursor.getLogicalY());
-        mvwprintw(m_window.getWin(), 16, 15, "y:  %d", m_cursor.getCursor().y);
-        mvwprintw(m_window.getWin(), 17, 15, "x:  %d", m_cursor.getCursor().x);
-        mvwprintw(m_window.getWin(), 18, 15, "ty: %d", ResizeHandle::getTermSize().y);
-        mvwprintw(m_window.getWin(), 17, 15, "tx: %d", ResizeHandle::getTermSize().x);
-        */
-
-        m_window.refreshWin();
+        m_window[WinType::MAIN].refreshWin();
     }
 
-    const Window& getWindow() const { return m_window; }
+    const Window& getWindow(std::size_t index) const { return m_window[index]; }
 
 private:
     std::string m_fileName{};
 
-    Window m_window{};
+    std::vector<Window> m_window{};
     Editor m_editor{};
     Cursor m_cursor{};
     Input m_input{}; 
