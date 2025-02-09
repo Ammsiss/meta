@@ -1,12 +1,13 @@
 #include <string>
 
+#include "aggregates.h"
 #include "window.h"
 #include "resizeHandle.h"
 #include "editor.h"
 
 namespace rendering
 {
-    inline void render(const Editor& editor, const Window& window)
+    inline void renderMain(const Editor& editor, const Window& window)
     { 
         window.clearWindow();
 
@@ -24,4 +25,32 @@ namespace rendering
         window.refreshWin();
     }
 
+    inline void renderSide(const Editor& editor, const Window& window)
+    {
+        window.clearWindow();
+
+        for (int i{ editor.getScrollOffset() }; i - editor.getScrollOffset() < ResizeHandle::getTermSize().y; ++i)
+        {
+            if (static_cast<int>(editor.getData().size() - 1) < i)
+            {
+                window.dimOn();
+                window.movePrint(i - editor.getScrollOffset(), 0, "~"); 
+                window.dimOff();
+            }
+            else if (editor.getCursor().y == i - editor.getScrollOffset())
+            {
+                window.boldOn();
+                window.movePrint(i - editor.getScrollOffset(), 0, std::to_string(i + 1));
+                window.boldOff();
+            }
+            else
+            {
+                window.dimOn();
+                window.movePrint(i - editor.getScrollOffset(), 0, std::to_string(i + 1)); 
+                window.dimOff();
+            }
+        }
+
+        window.refreshWin();
+    }
 }

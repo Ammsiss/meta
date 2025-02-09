@@ -6,16 +6,29 @@
 #include "aggregates.h"
 #include "window.h"
 
-void ResizeHandle::resize(Window& win)
-{
-    Point2d dimensions{};
-    setTermSize(dimensions.y, dimensions.x);
 
-    if (termSize.y != dimensions.y || termSize.x != dimensions.x)
+void ResizeHandle::resizeMain(Window& win)
+{
+    win.resizeWin(Point2d{ termSize.y, termSize.x - win.getPos().x });
+}
+
+void ResizeHandle::resizeSide(Window& win)
+{
+    win.resizeWin(Point2d{ termSize.y, 4 });
+}
+
+bool ResizeHandle::resize()
+{
+    Point2d term{};
+    setTermSize(term.y, term.x);
+
+    if (termSize.y != term.y || termSize.x != term.x)
     {
-        win.resizeWin(Point2d{ dimensions.y - win.getPos().y, dimensions.x - win.getPos().x });
-        termSize = dimensions;
+        termSize = term;
+        return true;
     }
+
+    return false;
 }
 
 // methods

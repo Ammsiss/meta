@@ -151,8 +151,8 @@ void Editor::moveRight()
 
 void Editor::handleCharacter(Input input)
 {
-    bool cursorNotAtEnd{ m_curP.x != ResizeHandle::getTermSize().x - 1 };
-    bool lineNotFull{ getLineLength(getLogicalY()) != ResizeHandle::getTermSize().x - 1 };
+    bool cursorNotAtEnd{ m_curP.x != ResizeHandle::getTermSize().x - 5 };
+    bool lineNotFull{ getLineLength(getLogicalY()) != ResizeHandle::getTermSize().x - 5 };
 
     if (cursorNotAtEnd && lineNotFull)
     {

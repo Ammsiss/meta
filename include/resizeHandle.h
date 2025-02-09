@@ -11,7 +11,10 @@ class Window;
 class ResizeHandle
 {
 public:
-    static void resize(Window& win);
+    static bool resize();
+    static void resizeMain(Window& win);
+    static void resizeSide(Window& win);
+
     static Point2d getTermSize();
     static void initialize(); 
 

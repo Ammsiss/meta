@@ -14,16 +14,19 @@ class Application
 public:
     Application(const int length, char* clArgs[])
     {
-        m_window.reserve(10);
-        m_window.emplace_back();
+        Point2d term{ ResizeHandle::getTermSize() };
+
+        m_window.emplace_back(Point2d{ term.y, term.x - 4 }, Point2d{ 0, 4 });
+        m_window.emplace_back(Point2d{ term.y, 4 }, Point2d{ 0, 0 });
 
         m_editor.renderCursor(m_window[WinType::MAIN]);
+        rendering::renderSide(m_editor, m_window[WinType::SIDE]);
 
         if (length > 1)
         {
             m_fileName = clArgs[1];
             m_editor.setData(FileUtils::loadFile(m_fileName));
-            rendering::render(m_editor, m_window[WinType::MAIN]);
+            rendering::renderMain(m_editor, m_window[WinType::MAIN]);
         }
     }
 
@@ -31,14 +34,19 @@ public:
     {
         while (true)
         {
-            ResizeHandle::resize(m_window[WinType::MAIN]);
+            if (ResizeHandle::resize())
+            {
+                ResizeHandle::resizeMain(m_window[WinType::MAIN]);
+                ResizeHandle::resizeSide(m_window[WinType::SIDE]);
+            }
 
             m_input.setInput(m_window[WinType::MAIN]);
 
             if (m_input.getInput() != ERR)
             {
                 m_input.handleInput(m_editor);
-                rendering::render(m_editor, m_window[WinType::MAIN]);
+                rendering::renderMain(m_editor, m_window[WinType::MAIN]);
+                rendering::renderSide(m_editor, m_window[WinType::SIDE]);
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(16));

@@ -19,8 +19,8 @@ namespace WinType
 {
     enum Win : unsigned int
     {
-        MAIN,
-        SIDE
+        MAIN = 0,
+        SIDE = 1
     };
 }
 

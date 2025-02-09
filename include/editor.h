@@ -20,6 +20,8 @@ public:
     int getScrollOffset() const { return m_scrollOffset; }
     void setData(std::deque<std::string> data) { m_data = data; }
     const std::deque<std::string>& getData() const { return m_data; }
+    Point2d getCursor() const { return m_curP; }
+    int getLogicalY() const { return m_scrollOffset + m_curP.y; }
 
     // methods
     void addLetter(const int input);
@@ -50,7 +52,6 @@ private:
 
     void setCursorY(const bool relative, const int curY); 
     void setCursorX(const bool relative, const int curX);
-    int getLogicalY() const { return m_scrollOffset + m_curP.y; }
     int getLineLength(int line) const;
 };
 

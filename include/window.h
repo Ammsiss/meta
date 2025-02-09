@@ -19,7 +19,9 @@ public:
     Window(Window&& win) noexcept
     : m_win { win.m_win }, m_dimensions { win.m_dimensions }, m_position { win.m_position }
     {
-        win = Window{};
+        win.m_win = nullptr;
+        win.m_dimensions = Point2d{};
+        win.m_position = Point2d{};
     }
 
     Window& operator=(Window&& win) noexcept
@@ -27,13 +29,16 @@ public:
         if (this == &win)
             return *this;
 
-        delwin(m_win);
+        if (m_win)
+            delwin(m_win);
 
         m_win = win.m_win;
         m_dimensions = win.m_dimensions;
         m_position = win.m_position;
 
-        win = Window{};
+        win.m_win = nullptr;
+        win.m_dimensions = Point2d{};
+        win.m_position = Point2d{};
 
         return *this;
     }
@@ -90,6 +95,26 @@ public:
     void reverseOff() const
     {
         wattroff(m_win, A_REVERSE);
+    }
+
+    void dimOn() const
+    {
+        wattron(m_win, A_DIM);
+    }
+
+    void dimOff() const
+    {
+        wattroff(m_win, A_DIM);
+    }
+
+    void boldOn() const
+    {
+        wattron(m_win, A_BOLD);
+    }
+
+    void boldOff() const
+    {
+        wattroff(m_win, A_BOLD);
     }
 
     void refreshWin() const
