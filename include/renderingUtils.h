@@ -13,11 +13,12 @@ namespace rendering
 
         std::size_t offset{ static_cast<std::size_t>(editor.getScrollOffset()) };
 
-        for (std::size_t i{ offset }; i < editor.getData().size() && static_cast<int>(i) - editor.getScrollOffset() < ResizeHandle::getTermSize().y; ++i)
+        // - 1 to account for bottom window
+        for (std::size_t i{ offset }; i < editor.getData().size() && static_cast<int>(i) - editor.getScrollOffset() < ResizeHandle::getTermSize().y - 1; ++i)
         {
             window.print(editor.getData()[i]);
 
-            if (static_cast<int>(i) - editor.getScrollOffset() != ResizeHandle::getTermSize().y - 1)
+            if (static_cast<int>(i) - editor.getScrollOffset() != ResizeHandle::getTermSize().y - 2)
                 window.print("\n");
         }
 
@@ -29,7 +30,7 @@ namespace rendering
     {
         window.clearWindow();
 
-        for (int i{ editor.getScrollOffset() }; i - editor.getScrollOffset() < ResizeHandle::getTermSize().y; ++i)
+        for (int i{ editor.getScrollOffset() }; i - editor.getScrollOffset() < ResizeHandle::getTermSize().y - 1; ++i)
         {
             if (static_cast<int>(editor.getData().size() - 1) < i)
             {

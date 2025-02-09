@@ -16,8 +16,8 @@ public:
     {
         Point2d term{ ResizeHandle::getTermSize() };
 
-        m_window.emplace_back(Point2d{ term.y, term.x - 4 }, Point2d{ 0, 4 });
-        m_window.emplace_back(Point2d{ term.y, 4 }, Point2d{ 0, 0 });
+        m_window.emplace_back(Point2d{ term.y - 1, term.x - 4 }, Point2d{ 0, 4 });
+        m_window.emplace_back(Point2d{ term.y - 1, 4 }, Point2d{ 0, 0 });
 
         m_editor.renderCursor(m_window[WinType::MAIN]);
         rendering::renderSide(m_editor, m_window[WinType::SIDE]);
@@ -27,6 +27,7 @@ public:
             m_fileName = clArgs[1];
             m_editor.setData(FileUtils::loadFile(m_fileName));
             rendering::renderMain(m_editor, m_window[WinType::MAIN]);
+            rendering::renderSide(m_editor, m_window[WinType::SIDE]);
         }
     }
 

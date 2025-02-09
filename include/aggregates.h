@@ -20,7 +20,9 @@ namespace WinType
     enum Win : unsigned int
     {
         MAIN = 0,
-        SIDE = 1
+        SIDE = 1,
+        BOTTOM = 2,
+        COUNT
     };
 }
 

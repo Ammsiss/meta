@@ -108,7 +108,7 @@ void Editor::moveDown()
 
     if (getLogicalY() != dataStructureSize)
     {
-        if (m_curP.y == ResizeHandle::getTermSize().y - 1)
+        if (m_curP.y == ResizeHandle::getTermSize().y - 2)
         {
             ++m_scrollOffset;
 
@@ -213,7 +213,7 @@ void Editor::handleNewline()
     // editor relies on cursor state
     addLine();
 
-    if (m_curP.y == ResizeHandle::getTermSize().y - 1)
+    if (m_curP.y == ResizeHandle::getTermSize().y - 2)
         ++m_scrollOffset;
     else
         setCursorY(true, 1);
